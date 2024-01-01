@@ -1,4 +1,8 @@
+import { useForm } from "react-hook-form";
+import { useState } from 'react';
 import { Box, Button, FormHelperText, InputLabel, OutlinedInput, Typography } from '@mui/material';
+
+import axios from 'axios';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -8,16 +12,66 @@ import '@fontsource/roboto/700.css';
 
 
 export function SignUp(props) {
+  const { 
+    register, 
+    handleSubmit,
+    reset,
+    clearErrors,
+    setError,
+    formState: { errors }
+} = useForm({
+    defaultValues: {
+        username: '',
+        email: '',
+        password: ''
+    }
+});
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.target);
-    console.log({
-      username: data.get('uname'),
-      email: data.get('email'),
-      password: data.get('password')
+  const usernameHelperText = "Nazwa użytkownika może składać się z liter alfabetu, cyfr i znaku _";
+  const passwordHelperText = "Hasło może zawierać co najmniej 8 znaków, w tym 2 cyfry";
+
+  const [errorVisibility, setErrorVisibility] = useState({
+      username: false,
+      email: false,
+      password: false
+  });
+
+
+  const onSubmit = data => {
+    setErrorVisibility({
+      username: false,
+      email: false,
+      password: false
     });
+
+    axios({
+      method: "POST",
+      url: "/register",
+      data: data,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
+    .then((response) => {
+      const { success, error } = response.data;
+
+      if (success) {
+        console.log('Registration successful');
+      } else {
+        console.log('Registration failed:', error);
+      }
+    })
+    .catch((error) => {
+      if (error.response) {
+        console.log(error.response)
+        console.log(error.response.error_messages)
+      }
+    })
+
+    reset();
   };
+
 
   return (
     <Box>
@@ -30,21 +84,32 @@ export function SignUp(props) {
       </Typography>
       <Typography align="center" variant="h4" sx={{ mt: 3 }} gutterBottom> Rejestracja </Typography>
 
-      <Box sx={{ p: 5 }}>
-        <InputLabel htmlFor="my-input">Username</InputLabel>
-        <OutlinedInput id="my-input" aria-describedby="my-helper-text" color="success" size="small" fullWidth="true" />
+      <form onSubmit={e => {
+        clearErrors();
+        handleSubmit(onSubmit)(e);
+      }}>
 
-        <InputLabel htmlFor="email-input" sx={{ pt: 2 }}>E-mail</InputLabel>
-        <OutlinedInput id="email-input" aria-describedby="my-helper-text" color="success" size="small" fullWidth="true" />
+        <Box sx={{ p: 5 }}>
+          <InputLabel htmlFor="my-input">Username</InputLabel>
+          <OutlinedInput id="my-input" color="success" size="small" fullWidth
+            {...register("username", { required: true })} />
+          <FormHelperText id="my-helper-text">{usernameHelperText}</FormHelperText>
 
-        <InputLabel htmlFor="my-input3" sx={{ pt: 2 }}>Password</InputLabel>
-        <OutlinedInput id="my-input" aria-describedby="my-helper-text" color="success" size="small" fullWidth="true" />
-        <FormHelperText id="my-helper-text">Hasło powinno mieć długość minimum 8 znaków i zawierać 2 cyfry</FormHelperText>
-      </Box>
+          <InputLabel htmlFor="email-input" sx={{ pt: 2 }}>E-mail</InputLabel>
+          <OutlinedInput id="email-input" color="success" size="small" fullWidth 
+            {...register("email", { required: true })} />
 
-      <Box sx={{ margin: "auto", display: "flex", flexDirection: "column", justifyContent: "center", px: 6 }} >
-          <Button size="large" variant="contained" color="success" align="center">Zarejestruj się</Button>
-      </Box>
+          <InputLabel htmlFor="my-input3" sx={{ pt: 2 }}>Password</InputLabel>
+          <OutlinedInput id="my-input" color="success" size="small" fullWidth type="password"
+            {...register("password", { required: true })} />
+          <FormHelperText id="my-helper-text">{passwordHelperText}</FormHelperText>
+        </Box>
+
+        <Box sx={{ margin: "auto", display: "flex", flexDirection: "column", justifyContent: "center", px: 6 }} >
+            <Button size="large" variant="contained" color="success" align="center" type="submit">Zarejestruj się</Button>
+        </Box>
+
+      </form>
     </Box>
   );
 }

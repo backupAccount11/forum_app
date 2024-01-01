@@ -1,6 +1,7 @@
 import { Box, FormHelperText, Grid, Link } from '@mui/material';
 import { useState } from 'react';
 
+
 import { borders } from '@mui/system';
 
 import '@fontsource/roboto/300.css';
@@ -14,7 +15,7 @@ import { Login } from './login';
 
 export default function AuthPage() {
 
-    const backgroundVideo = require('../pexels-yaroslav-shuraev-7957514 (Original).mp4');
+    const backgroundVideo = require('../pexels-yaroslav-shuraev.mp4');
 
     const [ loginPage, setLoginPage ] = useState(true);
     const [ registerPage, setRegisterPage ] = useState(false);

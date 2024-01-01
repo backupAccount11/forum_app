@@ -33,14 +33,14 @@ export function Login(props) {
 
         <Box sx={{ px: 5, py: 7 }}>
             <InputLabel htmlFor="email-input" sx={{ pt: 2 }}>E-mail</InputLabel>
-            <OutlinedInput id="email-input" aria-describedby="my-helper-text" color="success" size="small" fullWidth="true" />
+            <OutlinedInput id="email-input" color="success" size="small" fullWidth />
 
             <InputLabel htmlFor="my-input3" sx={{ pt: 2 }}>Password</InputLabel>
-            <OutlinedInput id="my-input" aria-describedby="my-helper-text" color="success" size="small" fullWidth="true" />
+            <OutlinedInput id="my-input" color="success" size="small" fullWidth type="password" />
         </Box>
 
         <Box sx={{ margin: "auto", display: "flex", flexDirection: "column", justifyContent: "center", px: 6 }} >
-            <Button size="large" variant="contained" color="success" align="center">Zaloguj się</Button>
+            <Button size="large" variant="contained" color="success" align="center" type="submit">Zaloguj się</Button>
         </Box>
     </Box>
   );
