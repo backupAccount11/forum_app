@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
-import { useState } from 'react';
 import { Box, Button, FormHelperText, InputLabel, OutlinedInput, Typography } from '@mui/material';
+import { useSnackbar } from 'notistack';
 
 import axios from 'axios';
 
@@ -15,57 +15,58 @@ export function SignUp(props) {
   const { 
     register, 
     handleSubmit,
-    reset,
-    clearErrors,
-    setError,
-    formState: { errors }
-} = useForm({
-    defaultValues: {
-        username: '',
-        email: '',
-        password: ''
-    }
-});
+    reset
+  } = useForm({
+      defaultValues: {
+          username: '',
+          email: '',
+          password: ''
+      }
+  });
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const usernameHelperText = "Nazwa użytkownika może składać się z liter alfabetu, cyfr i znaku _";
   const passwordHelperText = "Hasło może zawierać co najmniej 8 znaków, w tym 2 cyfry";
 
-  const [errorVisibility, setErrorVisibility] = useState({
-      username: false,
-      email: false,
-      password: false
-  });
+  function showModalError(value) {
+    console.log( value );
+    enqueueSnackbar(value, { variant: 'error', anchorOrigin: {
+      horizontal: 'right',
+      vertical: 'bottom' 
+    } });
+  }
 
 
   const onSubmit = data => {
-    setErrorVisibility({
-      username: false,
-      email: false,
-      password: false
-    });
-
-    axios({
-      method: "POST",
-      url: "/register",
-      data: data,
+    axios.post('/register', data, {
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data',
         'Accept': 'application/json'
-      }
+      },
     })
     .then((response) => {
       const { success, error } = response.data;
 
       if (success) {
-        console.log('Registration successful');
-      } else {
-        console.log('Registration failed:', error);
+        enqueueSnackbar("Rejestracja przebiegła pomyślnie", { variant: 'success' });
+      } 
+      else {
+        if (error['username']) {
+          showModalError(error['username']);
+        }
+        if (error['email']) {
+          showModalError(error['email']);
+        }
+        if (error['password']) {
+          showModalError(error['password']);
+        }
       }
     })
     .catch((error) => {
       if (error.response) {
-        console.log(error.response)
-        console.log(error.response.error_messages)
+        console.log(error.response);
+        console.log(error.response.error_messages);
       }
     })
 
@@ -85,7 +86,7 @@ export function SignUp(props) {
       <Typography align="center" variant="h4" sx={{ mt: 3 }} gutterBottom> Rejestracja </Typography>
 
       <form onSubmit={e => {
-        clearErrors();
+        e.preventDefault();
         handleSubmit(onSubmit)(e);
       }}>
 
@@ -96,11 +97,11 @@ export function SignUp(props) {
           <FormHelperText id="my-helper-text">{usernameHelperText}</FormHelperText>
 
           <InputLabel htmlFor="email-input" sx={{ pt: 2 }}>E-mail</InputLabel>
-          <OutlinedInput id="email-input" color="success" size="small" fullWidth 
+          <OutlinedInput id="email-input" color="success" size="small" fullWidth
             {...register("email", { required: true })} />
 
           <InputLabel htmlFor="my-input3" sx={{ pt: 2 }}>Password</InputLabel>
-          <OutlinedInput id="my-input" color="success" size="small" fullWidth type="password"
+          <OutlinedInput id="my-input2" color="success" size="small" fullWidth type="password"
             {...register("password", { required: true })} />
           <FormHelperText id="my-helper-text">{passwordHelperText}</FormHelperText>
         </Box>

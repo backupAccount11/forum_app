@@ -47,23 +47,22 @@ def hello():
 def registration():
     if request.method == 'POST':
         try:
-            username = request.args.get('username')
-            email = request.args.get('email')
-            password = request.args.get('password')
+            username = request.form.get('username')
+            email = request.form.get('email')
+            password = request.form.get('password')
 
-            error_messages = []
+            error_messages = {}
 
             if not is_valid_username(username):
-                error_messages.append("Podano błędną nazwę użytkownika")
+                error_messages["username"] = "Podano błędną nazwę użytkownika"
             if not is_valid_email(email):
-                error_messages.append("Podano błędny e-mail")
+                error_messages["email"] = "Podano błędny e-mail"
             if not is_password_valid(password):
-                error_messages.append("Podano błędne hasło")
-
-            # TODO check if username or email already exists !!
+                error_messages["password"] = "Podano błędne hasło"
 
             if error_messages:
-                return jsonify({"success": False, "error": error_messages}) # na frontend
+                app.logger.info('Registration errors: %s', error_messages)
+                return jsonify({"success": False, "error": error_messages})
 
             result_data = {
                 "username": username,
@@ -79,9 +78,9 @@ def registration():
 # REJESTRACJA - GET, POST
 # -> sprawdzenie poprawności przesłanych danych - ok
 # -> jeśli danych juz nie ma w bazie to zapisać
-# -> jak są to rzucić errorem i zwrócić na frontendzie - tu problem z response po stronie frontu
+# -> jak są to rzucić errorem i zwrócić na frontendzie - ok
 
-# LOGOWANIE - GET
+# LOGOWANIE - GET, POST
 # -> sprawdzenie poprawności danych
 # -> jak istnieją to zalogować nygusa
 # -> jak nie to rzucić error i przesłać na front
