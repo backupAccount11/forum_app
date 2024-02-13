@@ -61,6 +61,13 @@ export function SignUp(props) {
         if (error['password']) {
           showModalError(error['password']);
         }
+        
+        if (error['email_exist']) {
+          showModalError(error['email_exist']);
+        }
+        if (error['username_exist']) {
+          showModalError(error['username_exist']);
+        }
       }
     })
     .catch((error) => {
