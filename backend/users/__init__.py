@@ -17,6 +17,18 @@ def execute_insert_query(session, model, **kwargs):
         return False
     
 
+def status_update_query(session, model, email):
+    try:
+        entry = model.query.filter_by(email=email).first()
+        entry.active = True
+        session.commit()
+        return True
+    except Exception as e:
+        app.logger.info("Problem executing UPDATE query: " + str(e))
+        session.rollback()
+        return False
+
+
 app = Flask(__name__)
 CORS(app)
 

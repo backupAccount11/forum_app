@@ -49,7 +49,10 @@ export function SignUp(props) {
       const { success, error } = response.data;
 
       if (success) {
-        enqueueSnackbar("Rejestracja przebiegła pomyślnie", { variant: 'success' });
+        enqueueSnackbar("Rejestracja przebiegła pomyślnie", { variant: 'success', anchorOrigin: {
+          horizontal: 'right',
+          vertical: 'bottom' 
+        } });
       } 
       else {
         if (error['username']) {
