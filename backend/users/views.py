@@ -52,22 +52,3 @@ def registration():
 @cross_origin()
 def login():
     pass
-
-# REJESTRACJA - POST
-# -> sprawdzenie poprawności przesłanych danych - ok
-# -> jeśli danych juz nie ma w bazie to zapisać - ok (od razu zalogowany zostaje, active=1 w bazie)
-# -> jak są to rzucić errorem i zwrócić na frontendzie - ok
-
-# LOGOWANIE - GET
-# -> sprawdzenie poprawności danych
-# -> jak istnieją to zalogować nygusa (dać active=1 w bazie)
-# -> jak nie to rzucić error i przesłać na front
-
-# LOGOUT - GET, POST
-# -> jak wyloguje sie na frontendzie to wziu POST i dać active=0 w bazie
-
-
-
-# ~ INNY FOLDER ~
-# FETCH API CONTENT - GET
-# jak wpusci na strone glowna to wziac dane z api i do bazy
