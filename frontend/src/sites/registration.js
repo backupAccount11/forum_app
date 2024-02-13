@@ -2,6 +2,9 @@ import { useForm } from "react-hook-form";
 import { Box, Button, FormHelperText, InputLabel, OutlinedInput, Typography } from '@mui/material';
 import { useSnackbar } from 'notistack';
 
+import { useContext } from "react";
+import UserContext from '../utils/UserContext';
+
 import axios from 'axios';
 
 import '@fontsource/roboto/300.css';
@@ -23,6 +26,8 @@ export function SignUp(props) {
           password: ''
       }
   });
+
+  const { setUser } = useContext(UserContext);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -46,13 +51,15 @@ export function SignUp(props) {
       },
     })
     .then((response) => {
-      const { success, error } = response.data;
+      const { success, error, user_data } = response.data;
 
       if (success) {
         enqueueSnackbar("Rejestracja przebiegła pomyślnie", { variant: 'success', anchorOrigin: {
           horizontal: 'right',
           vertical: 'bottom' 
         } });
+
+        setUser(user_data);
       } 
       else {
         if (error['username']) {

@@ -6,7 +6,6 @@ from . import app, db, execute_insert_query, status_update_query
 from .validators import is_valid_username, is_valid_email, is_password_valid
 from .models import User
 
-
 @app.route("/register", methods=['POST'])
 @cross_origin()
 def registration():
@@ -38,12 +37,14 @@ def registration():
                 app.logger.info('User already exists errors: %s', error_messages)
                 return jsonify({"success": False, "error": error_messages})
             
-            result = execute_insert_query(db.session, User, username=username, email=email, password=generate_password_hash(password, method='scrypt')) 
+            result = execute_insert_query(db.session, User, username=username, email=email, password=generate_password_hash(password, method='scrypt'))
             
             if not result:
                 return jsonify({"success": False, "message": "Wystąpił jakiś problem podczas rejestracji"})
+            
+            db_user = User.query.filter_by(email=email).first()
 
-            return jsonify({"success": True, "message": "Registration successful"})
+            return jsonify({"success": True, "message": "Registration successful", "user_data": db_user.to_dict()})
         except Exception as e:
             return jsonify({"success": False, "error": str(e)})
 
@@ -78,12 +79,18 @@ def login():
                 error_messages["password_incorrect"] = "Hasło jest nieprawidłowe"
                 return jsonify({"success": False, "error": error_messages})
             
-            result = status_update_query(db.session, User, email=email)
+            result = status_update_query(db.session, User, email=email, type='login')
 
             if not result:
                 return jsonify({"success": False, "message": "Wystąpił jakiś problem podczas logowania"})
-
-            return jsonify({"success": True, "message": "Login successful"})
+            
+            return jsonify({"success": True, "message": "Login successful", "user_data": db_user.to_dict()})
         except Exception as e:
             return jsonify({"success": False, "error": str(e)})
 
+
+@app.route("/logout", methods=['POST'])
+@cross_origin()
+def logout():
+    pass
+# status_update_query(db.session, User, email=email, type='logout')

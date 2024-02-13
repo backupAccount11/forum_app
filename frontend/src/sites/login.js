@@ -2,13 +2,15 @@ import { useForm } from "react-hook-form";
 import { Box, Button, InputLabel, OutlinedInput, Typography } from '@mui/material';
 import { useSnackbar } from 'notistack';
 
+import { useContext } from "react";
+import UserContext from '../utils/UserContext';
+
 import axios from 'axios';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-
 
 
 export function Login(props) {
@@ -22,6 +24,8 @@ export function Login(props) {
           password: ''
       }
   });
+
+  const { setUser } = useContext(UserContext);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -41,15 +45,17 @@ export function Login(props) {
       },
     })
     .then((response) => {
-      const { success, error } = response.data;
+      const { success, error, user_data } = response.data;
 
-      console.log(response.data);
+      console.log(user_data);
 
       if (success) {
         enqueueSnackbar("Logowanie przebiegło pomyślnie", { variant: 'success', anchorOrigin: {
           horizontal: 'right',
           vertical: 'bottom' 
         } });
+
+        setUser(user_data);
       } 
       else {
         if (error['email']) {
