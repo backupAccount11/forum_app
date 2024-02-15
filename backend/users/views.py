@@ -2,6 +2,8 @@ from flask import jsonify, request
 from flask_cors import cross_origin
 from werkzeug.security import generate_password_hash, check_password_hash
 
+import json
+
 from . import app, db, execute_insert_query, status_update_query
 from .validators import is_valid_username, is_valid_email, is_password_valid
 from .models import User
@@ -89,8 +91,30 @@ def login():
             return jsonify({"success": False, "error": str(e)})
 
 
+
 @app.route("/logout", methods=['POST'])
 @cross_origin()
 def logout():
-    pass
-# status_update_query(db.session, User, email=email, type='logout')
+    if request.method == 'POST':
+        try:
+            reqdata = request.data
+
+            json_value = reqdata.decode('utf8').replace("'", '"')
+            data = json.loads(json_value)
+
+            error_messages = {}
+
+            db_user = User.query.filter_by(id=data["userid"]).first()
+            
+            if not db_user:
+                error_messages["undefined"] = "Niezidentyfikowany błąd"
+                return jsonify({"success": False, "error": error_messages})
+            
+            result = status_update_query(db.session, User, email=db_user.email, type='logout')
+
+            if not result:
+                return jsonify({"success": False, "message": "Wystąpił jakiś problem podczas wylogowywania"})
+            
+            return jsonify({"success": True, "message": "Logout successful"})
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)})

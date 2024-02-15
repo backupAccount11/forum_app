@@ -2,15 +2,13 @@ import { useForm } from "react-hook-form";
 import { Box, Button, InputLabel, OutlinedInput, Typography } from '@mui/material';
 import { useSnackbar } from 'notistack';
 
-import { useContext } from "react";
-import UserContext from '../utils/UserContext';
-
 import axios from 'axios';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+
 
 
 export function Login(props) {
@@ -24,8 +22,6 @@ export function Login(props) {
           password: ''
       }
   });
-
-  const { setUser } = useContext(UserContext);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -47,16 +43,14 @@ export function Login(props) {
     .then((response) => {
       const { success, error, user_data } = response.data;
 
-      console.log(user_data);
-
       if (success) {
         enqueueSnackbar("Logowanie przebiegło pomyślnie", { variant: 'success', anchorOrigin: {
           horizontal: 'right',
           vertical: 'bottom' 
         } });
 
-        setUser(user_data);
-      } 
+        localStorage.setItem('user', JSON.stringify(user_data));
+      }
       else {
         if (error['email']) {
           showModalError(error['email']);
@@ -86,19 +80,19 @@ export function Login(props) {
 
   return (
     <Box>
-        <Typography variant="h4" align="center"
-            style={{ 
-                fontFamily: "'Kalnia', serif",
-                color: "rgb(34 110 39)"
-            }}>
-            Forum ogólne
-        </Typography>
-        <Typography align="center" variant="h4" sx={{ mt: 3 }} gutterBottom> Logowanie </Typography>
+      <Typography variant="h4" align="center"
+          style={{ 
+              fontFamily: "'Kalnia', serif",
+              color: "rgb(34 110 39)"
+          }}>
+          Forum ogólne
+      </Typography>
+      <Typography align="center" variant="h4" sx={{ mt: 3 }} gutterBottom> Logowanie </Typography>
 
-        <form onSubmit={e => {
+      <form onSubmit={e => {
         e.preventDefault();
         handleSubmit(onSubmit)(e);
-        }}>
+      }}>
 
         <Box sx={{ px: 5, py: 7 }}>
             <InputLabel htmlFor="email-input" sx={{ pt: 2 }}>E-mail</InputLabel>
@@ -114,7 +108,7 @@ export function Login(props) {
             <Button size="large" variant="contained" color="success" align="center" type="submit">Zaloguj się</Button>
         </Box>
           
-        </form>
+      </form>
     </Box>
   );
 }

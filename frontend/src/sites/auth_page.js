@@ -19,7 +19,6 @@ export default function AuthPage() {
     const [ loginPage, setLoginPage ] = useState(true);
     const [ registerPage, setRegisterPage ] = useState(false);
 
-
     let showTextHelper = () => {
         let helperText = '';
 
@@ -51,14 +50,13 @@ export default function AuthPage() {
     };
 
 
-
     return (
         <Box sx={{ width: 850, height: 700 }} margin="5% auto" style={{
             "borderRadius": "25px", 
             "backdropFilter": "blur(16px) saturate(180%)",
             "WebkitBackdropFilter": "blur(16px) saturate(180%)",
             "backgroundColor": "rgba(255, 255, 255, 0.8)",
-          }}>
+        }}>
     
             <Grid container justify="center" style={{ width: "100%", height: "100%" }}>
               <Grid item xs={5} style={{ width: "100%", height: "100%", position: "relative" }}>
@@ -77,6 +75,6 @@ export default function AuthPage() {
               </Grid>
             </Grid>
     
-          </Box>
+        </Box>
     );
 }

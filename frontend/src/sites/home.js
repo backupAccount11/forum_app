@@ -1,21 +1,22 @@
 import { useContext } from "react";
-import UserContext from './UserContext';
+import UserContext from '../utils/UserContext';
+import MainSearchAppBar from "../components/main_navbar";
 
 
 export default function Home() {
-    const { user, setUser } = useContext(UserContext);
-  
-    return (
-      <div>
-        <h1>homepage</h1>
-        <p>Hello, {user.username}</p>
+  const { user } = useContext(UserContext);
 
-        {/* <Button onClick={logout}>Logout</Button> */}
-        {/* {user ? (
-          <p>Welcome, {user.username}!</p>
-        ) : (
-          <p>Please log in to continue</p> // redirect here to auth_page
-        )} */}
-      </div>
-    );
-  };
+  return (
+    <div>
+      <MainSearchAppBar username={user.username} />
+
+      <h1>homepage</h1>
+
+      {user ? (
+        <p>Welcome, {user.username}!</p>
+      ) : (
+        <p>Please log in to continue</p> // redirect here to auth_page
+      )}
+    </div>
+  );
+};

@@ -3,16 +3,49 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { SnackbarProvider } from 'notistack';
 
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+import { SnackbarProvider } from 'notistack';
+import { UserProvider } from './utils/UserContext';
+
+import { grey, blue } from '@mui/material/colors';
+
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    background: {
+      default: '#06021a',
+    },
+    components: {
+      mnavbar: {
+        searchbar: {
+          color: grey[70],
+          icon: grey[700],
+        },
+        main: grey[500],
+        iconbuttons: {
+          icon: blue[300]
+        }
+      }
+    },
+  },
+});
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <React.StrictMode>
-    <SnackbarProvider maxSnack={4} autoHideDuration={8000}>
-      <App />
-    </SnackbarProvider>
+    <UserProvider>
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <SnackbarProvider maxSnack={4} autoHideDuration={8000}>
+          <App />
+        </SnackbarProvider>
+      </ThemeProvider>
+    </UserProvider>
   </React.StrictMode>
 );
 

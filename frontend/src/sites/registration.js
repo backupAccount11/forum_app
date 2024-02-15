@@ -2,9 +2,6 @@ import { useForm } from "react-hook-form";
 import { Box, Button, FormHelperText, InputLabel, OutlinedInput, Typography } from '@mui/material';
 import { useSnackbar } from 'notistack';
 
-import { useContext } from "react";
-import UserContext from '../utils/UserContext';
-
 import axios from 'axios';
 
 import '@fontsource/roboto/300.css';
@@ -27,8 +24,6 @@ export function SignUp(props) {
       }
   });
 
-  const { setUser } = useContext(UserContext);
-
   const { enqueueSnackbar } = useSnackbar();
 
   const usernameHelperText = "Nazwa użytkownika może składać się z liter alfabetu, cyfr i znaku _";
@@ -41,7 +36,6 @@ export function SignUp(props) {
       vertical: 'bottom' 
     } });
   }
-
 
   const onSubmit = data => {
     axios.post('/register', data, {
@@ -59,8 +53,8 @@ export function SignUp(props) {
           vertical: 'bottom' 
         } });
 
-        setUser(user_data);
-      } 
+        localStorage.setItem('user', JSON.stringify(user_data));
+      }
       else {
         if (error['username']) {
           showModalError(error['username']);
