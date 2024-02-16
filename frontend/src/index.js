@@ -10,14 +10,15 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { SnackbarProvider } from 'notistack';
 import { UserProvider } from './utils/UserContext';
 
-import { grey, blue } from '@mui/material/colors';
+import { grey, blue, amber } from '@mui/material/colors';
 
 
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
     background: {
-      default: '#06021a',
+      default: '#070223',
+      button: blue[600]
     },
     components: {
       mnavbar: {
@@ -29,6 +30,13 @@ const darkTheme = createTheme({
         iconbuttons: {
           icon: blue[300]
         }
+      },
+      lnavbar: {
+        background: '#061131',
+        font: grey[300],
+        icon: grey[400],
+        listbox1: amber[500],
+        listboxother: blue[500]
       }
     },
   },

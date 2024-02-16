@@ -76,11 +76,11 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
-    minWidth: '34px',
-    height: '34px',
-    padding: '8px',
+    minWidth: 34,
+    height: 34,
+    padding: 8,
     margin: 'auto 0',
-    borderRadius: '12px',
+    borderRadius: 12,
     borderWidth: '0.5px',
     fontSize: '1.5rem',
     color: theme.palette.components.mnavbar.iconbuttons.icon,
@@ -96,6 +96,11 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     boxShadow: 'none'
 }));
 
+const StyledBasicButton = styled(Button)(({ theme }) => ({
+  backgroundColor: theme.palette.background.button
+}));
+
+
 
 export default function MainSearchAppBar(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -104,7 +109,6 @@ export default function MainSearchAppBar(props) {
   let { user, setUser } = React.useContext(UserContext);
   let navigate = useNavigate();
 
-  const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   const handleProfileMenuOpen = (event) => {
@@ -115,36 +119,9 @@ export default function MainSearchAppBar(props) {
     setMobileMoreAnchorEl(null);
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
-  };
-
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
-
-  const menuId = 'primary-search-account-menu';
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-    </Menu>
-  );
 
   const mobileMenuId = 'primary-search-account-menu-mobile';
   const renderMobileMenu = (
@@ -178,6 +155,10 @@ export default function MainSearchAppBar(props) {
     </Menu>
   );
 
+  const authRedirect = () => {
+    navigate('/auth');
+  }
+
 
   const logout = () => {
     axios.post('/logout', {"userid": user.id}, {
@@ -194,7 +175,7 @@ export default function MainSearchAppBar(props) {
         if (success) {
             localStorage.removeItem('user');
             setUser(null);
-            navigate('/auth');
+            authRedirect();
         }
     })
     .catch((error) => {
@@ -203,6 +184,31 @@ export default function MainSearchAppBar(props) {
             console.log(error.response.error_messages);
         }
     })
+  };
+
+
+  let showLoginButton = () => {
+    let temp = '';
+
+    if (props.userInfo) {
+      temp = <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+                <StyledBasicButton sx={{ marginRight: 7 }} variant="contained">Dodaj post</StyledBasicButton>
+                <Avatar sx={{ bgcolor: blue[600], width: 35, height: 35 }}> {props.userInfo.username[0].toUpperCase()} </Avatar>
+                <StyledTypography>
+                    {props.userInfo.username}
+                </StyledTypography>
+                <StyledButton variant="outlined" onClick={logout}>
+                    <ExitToAppOutlinedIcon fontSize="small" />
+                </StyledButton>
+              </Box>
+    }
+    else {
+      temp = <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+                <StyledBasicButton variant="contained" onClick={authRedirect}>Zaloguj się</StyledBasicButton>
+              </Box>
+    }
+
+    return temp;
   };
 
   
@@ -220,15 +226,8 @@ export default function MainSearchAppBar(props) {
             />
           </Search>
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <Avatar sx={{ bgcolor: blue[600], width: 34, height: 34 }}> {props.username[0].toUpperCase()} </Avatar>
-            <StyledTypography>
-                {props.username}
-            </StyledTypography>
-            <StyledButton size="small" variant="outlined" onClick={logout}>
-                <ExitToAppOutlinedIcon />
-            </StyledButton>
-          </Box>
+
+          { showLoginButton() }
 
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
             <IconButton
@@ -245,7 +244,6 @@ export default function MainSearchAppBar(props) {
         </Toolbar>
       </StyledAppBar>
       {renderMobileMenu}
-      {renderMenu}
     </Box>
   );
 }
