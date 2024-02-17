@@ -3,6 +3,9 @@ import { Box, Button, FormHelperText, InputLabel, OutlinedInput, Typography } fr
 import { useSnackbar } from 'notistack';
 
 import axios from 'axios';
+import { useContext } from "react";
+import UserContext from "../utils/UserContext";
+import { useNavigate } from "react-router-dom";
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -11,7 +14,7 @@ import '@fontsource/roboto/700.css';
 
 
 
-export function SignUp(props) {
+export function SignUp() {
   const { 
     register, 
     handleSubmit,
@@ -24,7 +27,10 @@ export function SignUp(props) {
       }
   });
 
-  const { enqueueSnackbar } = useSnackbar();
+  let { handleSetUser } = useContext(UserContext);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const navigate = useNavigate();
 
   const usernameHelperText = "Nazwa użytkownika może składać się z liter alfabetu, cyfr i znaku _";
   const passwordHelperText = "Hasło może zawierać co najmniej 8 znaków, w tym 2 cyfry";
@@ -53,31 +59,23 @@ export function SignUp(props) {
           vertical: 'bottom' 
         } });
 
-        localStorage.setItem('user', JSON.stringify(user_data));
+        handleSetUser(user_data);
+        setTimeout(() => {
+            closeSnackbar();
+            navigate('/');
+        }, 1500);
       }
       else {
-        if (error['username']) {
-          showModalError(error['username']);
-        }
-        if (error['email']) {
-          showModalError(error['email']);
-        }
-        if (error['password']) {
-          showModalError(error['password']);
-        }
-        
-        if (error['email_exist']) {
-          showModalError(error['email_exist']);
-        }
-        if (error['username_exist']) {
-          showModalError(error['username_exist']);
-        }
+        const keys = Object.keys(error);
+
+        keys.forEach(key => {
+          showModalError(error[key]);
+        });
       }
     })
     .catch((error) => {
       if (error.response) {
         console.log(error.response);
-        console.log(error.response.error_messages);
       }
     })
 

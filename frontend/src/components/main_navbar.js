@@ -106,8 +106,8 @@ export default function MainSearchAppBar(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
-  let { user, setUser } = React.useContext(UserContext);
-  let navigate = useNavigate();
+  let { user, handleRemoveUser } = React.useContext(UserContext);
+  const navigate = useNavigate();
 
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
@@ -155,10 +155,6 @@ export default function MainSearchAppBar(props) {
     </Menu>
   );
 
-  const authRedirect = () => {
-    navigate('/auth');
-  }
-
 
   const logout = () => {
     axios.post('/logout', {"userid": user.id}, {
@@ -168,25 +164,21 @@ export default function MainSearchAppBar(props) {
         },
     })
     .then((response) => {
-        const { success, message } = response.data;
-
-        console.log(success);
+        const { success } = response.data;
 
         if (success) {
-            localStorage.removeItem('user');
-            setUser(null);
-            authRedirect();
+          handleRemoveUser();
+          navigate('/auth');
         }
     })
     .catch((error) => {
         if (error.response) {
             console.log(error.response);
-            console.log(error.response.error_messages);
         }
     })
   };
 
-
+  
   let showLoginButton = () => {
     let temp = '';
 
@@ -204,7 +196,7 @@ export default function MainSearchAppBar(props) {
     }
     else {
       temp = <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                <StyledBasicButton variant="contained" onClick={authRedirect}>Zaloguj się</StyledBasicButton>
+                <StyledBasicButton variant="contained" onClick={() => navigate('/auth')}>Zaloguj się</StyledBasicButton>
               </Box>
     }
 

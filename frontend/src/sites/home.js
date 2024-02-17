@@ -1,12 +1,9 @@
-import { useContext } from "react";
-import UserContext from '../utils/UserContext';
 import MainSearchAppBar from "../components/main_navbar";
 import LeftNavbar from "../components/left_navbar";
 import { Grid } from "@mui/material";
 
 
-export default function Home() {
-  const { user } = useContext(UserContext);
+export default function Home(props) {
 
   return (
     <Grid container spacing={4}>
@@ -14,7 +11,7 @@ export default function Home() {
         <LeftNavbar />
       </Grid>
       <Grid item md={10}>
-        <MainSearchAppBar userInfo={user} />
+        <MainSearchAppBar userInfo={props.user} />
         <h1>homepage</h1>
       </Grid>
     </Grid>

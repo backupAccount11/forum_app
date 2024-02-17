@@ -3,6 +3,9 @@ import { Box, Button, InputLabel, OutlinedInput, Typography } from '@mui/materia
 import { useSnackbar } from 'notistack';
 
 import axios from 'axios';
+import { useContext } from "react";
+import UserContext from "../utils/UserContext";
+import { useNavigate } from "react-router-dom";
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -11,7 +14,7 @@ import '@fontsource/roboto/700.css';
 
 
 
-export function Login(props) {
+export function Login() {
   const { 
     register, 
     handleSubmit,
@@ -23,7 +26,10 @@ export function Login(props) {
       }
   });
 
-  const { enqueueSnackbar } = useSnackbar();
+  let { handleSetUser } = useContext(UserContext);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const navigate = useNavigate();
 
   function showModalError(value) {
     console.log( value );
@@ -43,34 +49,31 @@ export function Login(props) {
     .then((response) => {
       const { success, error, user_data } = response.data;
 
+      console.log(response.data);
+
       if (success) {
         enqueueSnackbar("Logowanie przebiegło pomyślnie", { variant: 'success', anchorOrigin: {
           horizontal: 'right',
           vertical: 'bottom' 
         } });
 
-        localStorage.setItem('user', JSON.stringify(user_data));
+        handleSetUser(user_data);
+        setTimeout(() => {
+            closeSnackbar();
+            navigate('/');
+        }, 1500);
       }
       else {
-        if (error['email']) {
-          showModalError(error['email']);
-        }
-        if (error['password']) {
-          showModalError(error['password']);
-        }
-        
-        if (error['user_not_exist']) {
-          showModalError(error['user_not_exist']);
-        }
-        if (error['password_incorrect']) {
-          showModalError(error['password_incorrect']);
-        }
+        const keys = Object.keys(error).reverse();
+
+        keys.forEach(key => {
+          showModalError(error[key]);
+        });
       }
     })
     .catch((error) => {
       if (error.response) {
         console.log(error.response);
-        console.log(error.response.error_messages);
       }
     })
 

@@ -1,8 +1,9 @@
 from flask import Flask
+from flask_session import Session
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
-from .config import DevelopmentConfig
+from config import DevelopmentConfig
 
 
 def execute_insert_query(session, model, **kwargs):
@@ -10,7 +11,7 @@ def execute_insert_query(session, model, **kwargs):
         new_entry = model(**kwargs)
         session.add(new_entry)
         session.commit()
-        return True
+        return { 'success': True, 'user': new_entry }
     except Exception as e:
         app.logger.info("Problem executing INSERT query: " + str(e))
         session.rollback()
@@ -30,15 +31,21 @@ def status_update_query(session, model, email, **kwargs):
     
 
 app = Flask(__name__)
+
 CORS(app)
 
 app.config.from_object(DevelopmentConfig)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+if not app.config['DEBUG']:
+    app.config['SESSION_COOKIE_SECURE'] = True
+
+Session(app)
+
 db = SQLAlchemy(app)
 
 with app.app_context():
     db.create_all()
-    print('Database created!')
+    print('Table for users app created!')
 
 from .views import *

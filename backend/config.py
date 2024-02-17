@@ -7,6 +7,8 @@ class Config:
     DEBUG = False
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SECRET_KEY = config_parser.get('keys', 'FLASK_KEY')
+    SESSION_TYPE = 'filesystem'
 
 class DevelopmentConfig(Config):
     DEBUG = True

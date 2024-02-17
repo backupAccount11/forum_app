@@ -9,8 +9,6 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(180), unique=False, nullable=False)
     active = db.Column(db.Boolean, nullable=False, default=True)
-    # active_from (time)
-    # active_to (when logout) - time
 
     def __init__(self, username=None, email=None, password=None):
         self.username = username
