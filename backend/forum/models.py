@@ -6,7 +6,7 @@ class ForumPost(forum_db.Model):
 
     # forum post id
     # id of author (user id)
-    # forum post title
+    # forum post title -> 200 max char
     # forum post description
     # forum post - time when added
     # forum post - likes

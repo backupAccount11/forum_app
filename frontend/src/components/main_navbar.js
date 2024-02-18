@@ -1,5 +1,4 @@
-import * as React from 'react';
-
+import { useContext, useState } from 'react';
 import axios from 'axios';
 import UserContext from '../utils/UserContext';
 import { useNavigate } from 'react-router-dom';
@@ -19,6 +18,8 @@ import { Avatar, Button, Typography } from '@mui/material';
 
 import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
 import { blue } from '@mui/material/colors';
+import PostThreadDialog from './dialog_post_thread';
+import { StyledBasicButton } from '../utils/styles';
 
 
 
@@ -96,18 +97,19 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     boxShadow: 'none'
 }));
 
-const StyledBasicButton = styled(Button)(({ theme }) => ({
-  backgroundColor: theme.palette.background.button
-}));
-
 
 
 export default function MainSearchAppBar(props) {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
 
-  let { user, handleRemoveUser } = React.useContext(UserContext);
+  let { user, handleRemoveUser } = useContext(UserContext);
+
   const navigate = useNavigate();
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
@@ -178,13 +180,14 @@ export default function MainSearchAppBar(props) {
     })
   };
 
-  
+
   let showLoginButton = () => {
     let temp = '';
 
     if (props.userInfo) {
       temp = <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                <StyledBasicButton sx={{ marginRight: 7 }} variant="contained">Dodaj post</StyledBasicButton>
+                <StyledBasicButton sx={{ marginRight: 7 }} variant="contained" onClick={handleOpen}>Dodaj post</StyledBasicButton>
+                <PostThreadDialog interaction={handleClose} var={open} />
                 <Avatar sx={{ bgcolor: blue[600], width: 35, height: 35 }}> {props.userInfo.username[0].toUpperCase()} </Avatar>
                 <StyledTypography>
                     {props.userInfo.username}

@@ -37,8 +37,14 @@ const darkTheme = createTheme({
         icon: grey[400],
         listbox1: amber[500],
         listboxother: blue[500]
+      },
+      tdialog: {
+        background: '#0b002f',
+        border: 'rgb(1 41 65)',
+        color: '#c1c1c1',
+        scrollbar: '#090028'
       }
-    },
+    }
   },
 });
 

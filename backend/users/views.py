@@ -141,7 +141,7 @@ def logout():
             clear_session_cookie()
 
             if session["login_time"]:
-                current_time = datetime.now().timestamp()
+                current_time = datetime.datetime.now().timestamp()
                 session_duration = current_time - session["login_time"]
                 # TODO: Session duration: {session_duration} seconds - send that do logstash 
     
