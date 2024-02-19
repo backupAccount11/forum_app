@@ -1,9 +1,9 @@
 import datetime
+import json
+
 from flask import jsonify, request, session
 from flask_cors import cross_origin
 from werkzeug.security import generate_password_hash, check_password_hash
-
-import json
 
 from . import app, db, execute_insert_query, status_update_query
 from .validators import is_valid_username, is_valid_email, is_password_valid

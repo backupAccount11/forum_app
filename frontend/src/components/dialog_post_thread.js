@@ -131,7 +131,7 @@ export default function PostThreadDialog(props) {
         <Box>
             <StyledDialog
                 open={props.var}
-                onClose={props.interaction}
+                onClose={() => { props.interaction(); setTags([]); setCategories([]) }}
                 scroll='paper'
                 PaperProps={{
                     component: 'form',
