@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Chip, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select } from '@mui/material';
+import { Chip, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select, TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import { StyledBasicButton } from '../utils/styles';
 import { StyledDialog } from '../utils/styles';
@@ -18,24 +18,32 @@ export default function PostThreadDialog(props) {
         },
     };
 
-    const [categories, setCategories] = useState([]); // TODO: GET LIST OF CATEGORIES FROM SERVER
+    const MAX_TAGS = 7;
+    const MAX_CATEGORIES = 4;
+    const MIN_CATEGORIES = 1;
+
+    const [categories, setCategories] = useState([]);
+    const [tags, setTags] = useState([]);
+    const [chipInput, setChipInput] = useState(''); // for tags
 
     const tempCategories = [
-        { 'cid': 1, 'category_name': 'Networking', 'color': 'primary' },
-        { 'cid': 2, 'category_name': 'Windows server', 'color': 'secondary' },
-        { 'cid': 3, 'category_name': 'Cyberbezpieczeństwo', 'color': 'error' }
+        { cid: 1, category_name: 'Networking', color: 'green' },
+        { cid: 2, category_name: 'Windows server', color: 'yellow' },
+        { cid: 3, category_name: 'Cyberbezpieczeństwo', color: 'blue' }
       ];
-
-     // change to add whole list, instead of single elements to array
 
     // TODO: INSIDE USEEFFECT FETCH CATEGORIES FROM SERVER (ASYNC/AWAIT)
 
-    // TODO: add limit to 4 categories
     const categoriesComponent = () => {
         const handleChange = (event) => {
             const {
                 target: { value },
             } = event;
+
+            // if (value.length > MAX_CATEGORIES || value.length < MIN_CATEGORIES) {
+            // TODO: show error message
+            // }
+
             setCategories(
                 typeof value === 'string' ? value.split(',') : value,
             );
@@ -47,28 +55,74 @@ export default function PostThreadDialog(props) {
                         labelId="demo-multiple-chip-label"
                         id="demo-multiple-chip"
                         multiple
-                        value={categories}
+                        value={categories} //
                         onChange={handleChange}
                         input={<OutlinedInput id="select-multiple-chip" label="Kategorie" />}
                         renderValue={(selected) => (
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                {selected.map((value) => (
-                                    <Chip key={value} label={value} />
-                                ))}
+                                {selected.map(value => {
+                                    return <Chip key={value} label={value} />
+                                })}
                             </Box>
                         )}
                         MenuProps={MenuProps}
-                        >  
+                    > 
                             {tempCategories.map(category => (
-                                <MenuItem key={category.cid} 
-                                    value={category.category_name}
-                                    // style={getStyles()} // for color ?
-                                >
+                                <MenuItem key={category.cid} value={category.category_name}>
                                     {category.category_name}
                                 </MenuItem>
                             ))}
                     </Select>
             </FormControl>
+    };
+
+
+    const tagsComponent = () => {
+        const handleCreateTag = (event) => {
+            const inputValue = event.target.value.trim();
+            if (inputValue.endsWith(',')) {
+                const chipName = inputValue.slice(0, -1);
+                // if (tags.length > MAX_TAGS) {
+                 // TODO: throw error message here
+                // }
+                if (chipName && !tags.includes(chipName)) {
+                  setTags([...tags, chipName]);
+                  setChipInput('');
+                }
+            } else {
+                setChipInput(inputValue);
+            }
+        };
+
+        const handleDeleteTag = (tagToDelete) => () => {
+            setTags((tags) => tags.filter(tag => tag !== tagToDelete));
+        };
+
+        return (
+            <Box sx={{ my: 1, width: '100%' }}>
+                <TextField
+                    id="tag-input"
+                    value={chipInput}
+                    onChange={handleCreateTag}
+                    placeholder={tags.length === 0 ? "Oddzielaj kolejne tagi przecinkami" : ""}
+                    fullWidth
+                    multiline
+                />
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', my: 1 }}>
+                    <FormHelperText>Możesz dodać max. 7 tagów</FormHelperText>
+                </Box>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                    {tags.map((tag, index) => (
+                        <Chip
+                            key={index}
+                            label={tag}
+                            onDelete={handleDeleteTag(tag)}
+                            sx={{ m: 0.5 }}
+                        />
+                    ))}
+                </Box>
+          </Box>
+        );
     };
 
 
@@ -107,11 +161,14 @@ export default function PostThreadDialog(props) {
                     <Box sx={{ py: 2 }}>
                         <InputLabel htmlFor="description-input" sx={{ pb: 2 }}>Kategorie wpisu</InputLabel>
                         {categoriesComponent()}
-                        <FormHelperText>Możesz wybrać max 4 dostępne kategorie</FormHelperText>
+                        <FormHelperText>Możesz wybrać max. 4 dostępne kategorie (min. 1 wymagana)</FormHelperText>
                     </Box>
 
-                    {/* ADD TAGS */}
-                        
+                    <Box sx={{ py: 2 }}>
+                        <InputLabel htmlFor="description-input" sx={{ pb: 2 }}>Tagi wpisu</InputLabel>
+                        {tagsComponent()}
+                    </Box>
+
                 </DialogContent>
                 <DialogActions sx={{ m: 'auto' }}>
                     <StyledBasicButton size='large' variant="contained" type="submit">Prześlij</StyledBasicButton>
