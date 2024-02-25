@@ -3,4 +3,5 @@
 /flask_session
 /config.ini
 /users/__pycache__
+/forum/__pycache__
 .env

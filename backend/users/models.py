@@ -1,4 +1,4 @@
-from . import db
+from main import db, login_manager
 
 
 class User(db.Model):
@@ -25,3 +25,7 @@ class User(db.Model):
     def to_dict(self):
         return { "id": self.id, "username": self.username, "email": self.email, "is_active": self.is_active } 
     
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))

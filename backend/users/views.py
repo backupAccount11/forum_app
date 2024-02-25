@@ -1,11 +1,11 @@
 import datetime
 import json
 
-from flask import jsonify, request, session
+from flask import jsonify, request, session, redirect
 from flask_cors import cross_origin
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from . import app, db, execute_insert_query, status_update_query
+from main import app, db, execute_insert_query, status_update_query
 from .validators import is_valid_username, is_valid_email, is_password_valid
 from .models import User
 
@@ -26,7 +26,6 @@ def clear_session_cookie():
 
     for attribute in attributes:
         session.pop(attribute, None)
-
 
 
 @app.route("/register", methods=['POST'])
@@ -65,7 +64,7 @@ def registration():
             if not result['success']:
                 return jsonify({"success": False, "message": "Wystąpił jakiś problem podczas rejestracji"})
             
-            set_session_cookie(result['user'])
+            set_session_cookie(result['data'])
             user_data = { attribute: session.get(attribute) for attribute in ['id', 'username', 'email'] }
             
             return jsonify({"success": True, "message": "Registration successful", "user_data": user_data})
@@ -74,7 +73,7 @@ def registration():
 
 
 
-@app.route("/login", methods=['POST'])
+@app.route("/login", methods=['GET', 'POST'])
 @cross_origin()
 def login():
     if request.method == 'POST':
@@ -114,6 +113,13 @@ def login():
             return jsonify({"success": True, "message": "Login successful", "user_data": user_data})
         except Exception as e:
             return jsonify({"success": False, "error": str(e)})
+        
+    elif request.method == 'GET':
+        if 'id' in session:
+            user_data = { attribute: session.get(attribute) for attribute in ['id', 'username', 'email'] }
+            return jsonify({"success": True, "message": "User already logged in", "user_data": user_data})
+        else:
+            return jsonify({"success": False, "message": "User not logged in"}), 401
 
 
 

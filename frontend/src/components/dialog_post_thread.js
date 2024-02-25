@@ -1,12 +1,29 @@
 import { useEffect, useState } from 'react';
+import { useForm } from "react-hook-form";
+import axios from 'axios';
+
 import { Chip, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select, TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import { StyledBasicButton } from '../utils/styles';
 import { StyledDialog } from '../utils/styles';
+import { useSnackbar } from 'notistack';
 
 
 
 export default function PostThreadDialog(props) {
+    const { 
+        register, 
+        handleSubmit,
+        reset
+    } = useForm({
+        defaultValues: {
+            title: '',
+            description: ''
+        }
+    });
+
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
     const MenuProps = {
@@ -18,13 +35,9 @@ export default function PostThreadDialog(props) {
         },
     };
 
-    const MAX_TAGS = 7;
-    const MAX_CATEGORIES = 4;
-    const MIN_CATEGORIES = 1;
-
     const [categories, setCategories] = useState([]);
     const [tags, setTags] = useState([]);
-    const [chipInput, setChipInput] = useState(''); // for tags
+    const [chipInput, setChipInput] = useState('');  // for tags
 
     const tempCategories = [
         { cid: 1, category_name: 'Networking', color: 'green' },
@@ -34,18 +47,65 @@ export default function PostThreadDialog(props) {
 
     // TODO: INSIDE USEEFFECT FETCH CATEGORIES FROM SERVER (ASYNC/AWAIT)
 
+
+    function showModalError(value) {
+        enqueueSnackbar(value, { variant: 'error', anchorOrigin: {
+            horizontal: 'right',
+            vertical: 'bottom' 
+        } });
+    }
+
+    const onSubmit = data => {
+        data.categories = categories;
+        data.tags = tags;
+
+        axios.post('/create_forumpost', data, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'Accept': 'application/json'
+            },
+            withCredentials: true
+          })
+          .then((response) => {
+            const { success, error } = response.data;
+
+            console.log(response.data);
+
+            if (success) {
+                enqueueSnackbar("Post został dodany pomyślnie", { variant: 'success', anchorOrigin: {
+                    horizontal: 'right',
+                    vertical: 'bottom' 
+                } });
+        
+                props.interaction(); // close dialog
+                reset();
+
+                setTimeout(() => {
+                    closeSnackbar();
+                }, 1500);
+            } else {
+                const keys = Object.keys(error);
+                keys.forEach(key => {
+                    if (error[key] != null) {
+                        showModalError(error[key]);
+                    }
+                });
+            }
+
+          })
+          .catch((error) => {
+            if (error.response) {
+              console.log(error.response);
+            }
+          })
+    };
+
+
     const categoriesComponent = () => {
         const handleChange = (event) => {
-            const {
-                target: { value },
-            } = event;
-
-            // if (value.length > MAX_CATEGORIES || value.length < MIN_CATEGORIES) {
-            // TODO: show error message
-            // }
-
+            const { target: { value } } = event;
             setCategories(
-                typeof value === 'string' ? value.split(',') : value,
+                typeof value === 'string' ? value.split(',') : value
             );
         };
 
@@ -55,7 +115,7 @@ export default function PostThreadDialog(props) {
                         labelId="demo-multiple-chip-label"
                         id="demo-multiple-chip"
                         multiple
-                        value={categories} //
+                        value={categories}
                         onChange={handleChange}
                         input={<OutlinedInput id="select-multiple-chip" label="Kategorie" />}
                         renderValue={(selected) => (
@@ -82,9 +142,6 @@ export default function PostThreadDialog(props) {
             const inputValue = event.target.value.trim();
             if (inputValue.endsWith(',')) {
                 const chipName = inputValue.slice(0, -1);
-                // if (tags.length > MAX_TAGS) {
-                 // TODO: throw error message here
-                // }
                 if (chipName && !tags.includes(chipName)) {
                   setTags([...tags, chipName]);
                   setChipInput('');
@@ -109,7 +166,7 @@ export default function PostThreadDialog(props) {
                     multiline
                 />
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', my: 1 }}>
-                    <FormHelperText>Możesz dodać max. 7 tagów</FormHelperText>
+                    <FormHelperText>Możesz dodać max. 8 tagów</FormHelperText>
                 </Box>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                     {tags.map((tag, index) => (
@@ -131,17 +188,18 @@ export default function PostThreadDialog(props) {
         <Box>
             <StyledDialog
                 open={props.var}
-                onClose={() => { props.interaction(); setTags([]); setCategories([]) }}
+                onClose={() => { props.interaction(); setTags([]); }}
                 scroll='paper'
                 PaperProps={{
                     component: 'form',
                     sx: { p: 4 },
                     onSubmit: (event) => {
                         event.preventDefault();
-                        // TODO: axios request to flask endpoint to post thread
-                        props.interaction(); // close dialog
+                        closeSnackbar();
+                        handleSubmit(onSubmit)(event);
+                    }
                 }
-            }}>
+            }>
                 <DialogTitle>Utwórz nowy wątek</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
@@ -150,18 +208,20 @@ export default function PostThreadDialog(props) {
 
                     <Box sx={{ py: 2 }}>
                         <InputLabel htmlFor="title-input" sx={{ py: 2 }}>Tytuł</InputLabel>
-                        <OutlinedInput id="title-input" color="primary" size="small" fullWidth multiline maxRows={4} />
+                        <OutlinedInput id="title-input" color="primary" size="small" fullWidth multiline maxRows={4} 
+                            {...register("title", { required: false })} /> 
                     </Box>
 
                     <Box sx={{ py: 2 }}>
                         <InputLabel htmlFor="description-input" sx={{ pb: 2 }}>Opis</InputLabel>
-                        <OutlinedInput id="description-input" color="primary" size="small" fullWidth multiline minRows={6} />
+                        <OutlinedInput id="description-input" color="primary" size="small" fullWidth multiline minRows={6} 
+                            {...register("description", { required: false })} />
                     </Box>
 
                     <Box sx={{ py: 2 }}>
                         <InputLabel htmlFor="description-input" sx={{ pb: 2 }}>Kategorie wpisu</InputLabel>
                         {categoriesComponent()}
-                        <FormHelperText>Możesz wybrać max. 4 dostępne kategorie (min. 1 wymagana)</FormHelperText>
+                        <FormHelperText>Możesz wybrać max. 5 dostępne kategorie (min. 1 wymagana)</FormHelperText>
                     </Box>
 
                     <Box sx={{ py: 2 }}>
