@@ -9,24 +9,16 @@ from .validators import is_valid_title, is_valid_description, validate_categorie
 from .models import ForumPost, Category, Tag
 
 
-# @app.route("/get_categories", methods=['GET'])
-# @cross_origin()
-# def get_categories():
-#     if request.method == 'GET':
-#         categories = [
-#             { 'name': 'Maszyny wirtualne', 'color': 'blue' },
-#             { 'name': 'VMware Workstation', 'color': 'blue' },
-#             { 'name': 'Administracja Linux', 'color': 'violet' },
-#             { 'name': 'Windows Server', 'color': 'pink' },
-#             { 'name': 'Cyberbezpieczeństwo', 'color': 'aqua' },
-#             { 'name': 'Kali', 'color': 'aqua' }
-#         ]
-
-# try:
-
-#     return jsonify({"success": True, "message": "Registration successful", })
-# except Exception as e:
-#     return jsonify({"success": False, "error": str(e)})
+@app.route("/get_categories", methods=['GET'])
+@cross_origin()
+def get_categories():
+    if request.method == 'GET':
+        try:
+            categories = Category.query.all()
+            categories_list = [{'id': category.id, 'name': category.name, 'color': category.color} for category in categories]
+            return jsonify(categories_list)
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)})
 
 
 @app.route("/create_forumpost", methods=['POST'])
@@ -70,22 +62,22 @@ def create_forumpost():
                 if category:
                     forum_post.categories.append(category)
 
-            # for tag_name in correct_tags:
-            #     tag = Tag.query.filter_by(name=tag_name).first()
-            #     if tag:
-            #         tag.counter += 1
-            #     else:
-            #         tag = Tag(name=tag_name, counter=1)
-            #     forum_post.tags.append(tag)
+            for tag_name in correct_tags:
+                tag = Tag.query.filter_by(name=tag_name).first()
+                if tag:
+                    # tag.counter += 1
+                    app.logger.info("Here add +1 to tag counter")
+                else:
+                    tag = Tag(name=tag_name, counter=1)
+                    app.logger.info("Add tag to table")
+                    # add tag to tag table
+                forum_post.tags.append(tag)
 
-            # populate category table from file
-            # useeffect it on frontend
-            # correct frontend with categories
-            # check if loop above works - categories
-            # correct loop tag
+            # check if relationships are ok 
+            # but create associated Tag
 
-            # app.logger.info(f"Categories: {[category for category in forum_post.categories]}")
-            # app.logger.info(f"Tags: {[tag for tag in forum_post.tags]}")
+            app.logger.info(f"Categories: {[category for category in forum_post.categories]}")
+            app.logger.info(f"Tags: {[tag for tag in forum_post.tags]}")
 
             
             

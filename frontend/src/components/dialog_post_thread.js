@@ -43,10 +43,10 @@ export default function PostThreadDialog(props) {
         { cid: 1, category_name: 'Networking', color: 'green' },
         { cid: 2, category_name: 'Windows server', color: 'yellow' },
         { cid: 3, category_name: 'Cyberbezpieczeństwo', color: 'blue' }
-      ];
+    ];
 
-    // TODO: INSIDE USEEFFECT FETCH CATEGORIES FROM SERVER (ASYNC/AWAIT)
-
+    const [ availableCategories, setAvailableCategories ] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     function showModalError(value) {
         enqueueSnackbar(value, { variant: 'error', anchorOrigin: {
@@ -54,6 +54,25 @@ export default function PostThreadDialog(props) {
             vertical: 'bottom' 
         } });
     }
+
+    useEffect(() => {
+        if (props.var && availableCategories.length === 0) {
+            axios.get('/get_categories', {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.data) {
+                    setAvailableCategories(response.data);
+                    setLoading(false);
+                }
+            })
+            .catch( _ => {
+                showModalError("Błąd podczas pobierania danych");
+            });
+        }
+    }, [props.var, availableCategories]);
 
     const onSubmit = data => {
         data.categories = categories;
@@ -78,6 +97,7 @@ export default function PostThreadDialog(props) {
                 } });
         
                 props.interaction(); // close dialog
+                setLoading(false);
                 reset();
 
                 setTimeout(() => {
@@ -127,11 +147,14 @@ export default function PostThreadDialog(props) {
                         )}
                         MenuProps={MenuProps}
                     > 
-                            {tempCategories.map(category => (
-                                <MenuItem key={category.cid} value={category.category_name}>
-                                    {category.category_name}
-                                </MenuItem>
-                            ))}
+
+                        {loading && <p>Wczytywanie danych...</p>}
+
+                        {!loading && availableCategories.map(category => (
+                            <MenuItem key={category.id} value={category.name}>
+                                {category.name}
+                            </MenuItem>
+                        ))}
                     </Select>
             </FormControl>
     };
@@ -188,7 +211,12 @@ export default function PostThreadDialog(props) {
         <Box>
             <StyledDialog
                 open={props.var}
-                onClose={() => { props.interaction(); setTags([]); }}
+                onClose={() => { 
+                    props.interaction();
+                    setLoading(false);
+                    setCategories([]); 
+                    setTags([]);
+                }}
                 scroll='paper'
                 PaperProps={{
                     component: 'form',

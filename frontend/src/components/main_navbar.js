@@ -163,7 +163,7 @@ export default function MainSearchAppBar(props) {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
-        },
+        }
     })
     .then((response) => {
         const { success } = response.data;

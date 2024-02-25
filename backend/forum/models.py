@@ -9,6 +9,9 @@ class Category(db.Model):
     name = db.Column(db.String(150), nullable=False, unique=True)
     color = db.Column(db.String(50), nullable=False)
 
+    def __repr__(self):
+        return f'<id={self.id}, name={self.name}, color={self.color}>'
+
 
 
 class Tag(db.Model):
@@ -17,6 +20,9 @@ class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False, unique=True)
     counter = db.Column(db.Integer, default=0)
+
+    def __repr__(self):
+        return f'<id={self.id}, name={self.name}, counter={self.counter}>'
 
 
 categories_table = db.Table('categories_table',

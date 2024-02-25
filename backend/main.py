@@ -7,6 +7,19 @@ from flask_cors import CORS
 from config import DevelopmentConfig
 
 
+
+# def populate_categories_from_file(session, model, filename):
+#     with open(filename, 'r') as file:
+#         lines = file.readlines()
+#         for line in lines:
+#             parts = line.strip().split(', ')
+#             if len(parts) == 2:
+#                 name, color = parts
+#                 category = model(name=name, color=color)
+#                 session.add(category)
+#         session.commit()
+
+
 def execute_insert_query(session, model, **kwargs):
     try:
         new_entry = model(**kwargs)
@@ -54,3 +67,5 @@ from forum import models, views
 with app.app_context():
     db.create_all()
     print('Tables created!')
+
+# populate_categories_from_file(db.session, models.Category, 'categories.txt')
