@@ -1,11 +1,13 @@
 import json
 
-from main import app, db
+from main import app, db, execute_insert_query, execute_insert_query_obj
 from flask import jsonify, request, session
 from flask_cors import cross_origin
 from flask_login import login_required
 
 from .validators import is_valid_title, is_valid_description, validate_categories, validate_tags
+
+from users.models import User
 from .models import ForumPost, Category, Tag
 
 
@@ -57,6 +59,14 @@ def create_forumpost():
 
             forum_post = ForumPost(title=title, description=description)
 
+            author = User.query.filter_by(id=session['id']).first()
+
+            if author:
+                forum_post.author = author
+                forum_post.author_id = author.id
+            else:
+                return jsonify({"success": False, "error": "Wystąpił niezidentyfikowany błąd"})
+
             for category_name in categories:
                 category = Category.query.filter_by(name=category_name).first()
                 if category:
@@ -65,20 +75,21 @@ def create_forumpost():
             for tag_name in correct_tags:
                 tag = Tag.query.filter_by(name=tag_name).first()
                 if tag:
-                    # tag.counter += 1
-                    app.logger.info("Here add +1 to tag counter")
+                    tag.counter += 1
+                    app.logger.info("Incremented counter for tag: {}".format(tag_name))
+                    db.session.commit()
+                    forum_post.tags.append(tag)
                 else:
-                    tag = Tag(name=tag_name, counter=1)
-                    app.logger.info("Add tag to table")
-                    # add tag to tag table
-                forum_post.tags.append(tag)
+                    result = execute_insert_query(db.session, model=Tag, name=tag_name, counter=1)
+                    if result:
+                        app.logger.info("Tag added to db: {}".format(tag_name))
+                        tag = Tag.query.filter_by(name=tag_name).first()
+                        forum_post.tags.append(tag)
 
-            # check if relationships are ok 
-            # but create associated Tag
+            res_forumpost = execute_insert_query_obj(db.session, forum_post)
 
-            app.logger.info(f"Categories: {[category for category in forum_post.categories]}")
-            app.logger.info(f"Tags: {[tag for tag in forum_post.tags]}")
-
+            if res_forumpost:
+                app.logger.info(f"Forum post added successfully: {res_forumpost}")
             
             
             # TODO: przesłać prompty do logstasha żeby wyalertować potencjalne sql injection
@@ -87,3 +98,29 @@ def create_forumpost():
             return jsonify({"success": True, "message": "Post added successfully", })
         except Exception as e:
             return jsonify({"success": False, "error": str(e)})
+
+
+@app.route("/get_popular_posts", methods=['GET'])
+@cross_origin()
+def get_popular_posts():
+    if request.method == 'GET':
+        try:
+            posts = ForumPost.query.order_by(ForumPost.likes.desc()).all()
+            posts_list = [{'id': post.id, 'name': post.name, 'description': post.description,
+                           'likes': post.liked, 'author': post.author, 'categories': post.categories,
+                            'tags': post.tags, 'created_at': post.created_at } for post in posts]
+            return jsonify(posts_list)
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)})
+        
+
+# @app.route("/get_user_posts/<user_id>", methods=['GET'])
+# @cross_origin()
+# def get_user_posts(user_id):
+#     if request.method == 'GET':
+#         try:
+#             categories = Category.query.all()
+#             categories_list = [{'id': category.id, 'name': category.name, 'color': category.color} for category in categories]
+#             return jsonify(categories_list)
+#         except Exception as e:
+#             return jsonify({"success": False, "error": str(e)})

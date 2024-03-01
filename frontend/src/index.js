@@ -53,13 +53,13 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <UserProvider>
-      <ThemeProvider theme={darkTheme}>
-        <CssBaseline />
-        <SnackbarProvider maxSnack={4} autoHideDuration={8000}>
-          <App />
-        </SnackbarProvider>
-      </ThemeProvider>
-    </UserProvider>
+        <ThemeProvider theme={darkTheme}>
+          <CssBaseline />
+          <SnackbarProvider maxSnack={4} autoHideDuration={8000}>
+            <App />
+          </SnackbarProvider>
+        </ThemeProvider>
+      </UserProvider>
   </React.StrictMode>
 );
 

@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import UserContext from "../utils/UserContext";
 
 import styled from "@emotion/styled";
@@ -40,13 +40,22 @@ const StyledOtherListBox = styled(StyledListBox)(({ theme }) => ({
 }));
 
 
+
 export default function LeftNavbar() {
     let { user } = useContext(UserContext);
+
+    const [selectedItem, setSelectedItem] = useState('Najpopularniejsze');
+
+    const handleItemClick = (index) => {
+        setSelectedItem(index);
+      };
 
     const firstBox = () => {
         return <List dense>
                     <ListItem disablePadding>
-                        <ListItemButton>
+                        <ListItemButton 
+                            selected={selectedItem === 'Najpopularniejsze'} 
+                            onClick={() => handleItemClick('Najpopularniejsze')}>
                             <StyledListItemIcon>
                                 <MovingIcon />
                             </StyledListItemIcon>
@@ -54,7 +63,9 @@ export default function LeftNavbar() {
                         </ListItemButton>
                     </ListItem>
                     <ListItem disablePadding>
-                        <ListItemButton disabled={!user}>
+                        <ListItemButton disabled={!user}
+                                selected={selectedItem === 'Moje posty'} 
+                                onClick={() => handleItemClick('Moje posty')}>
                             <StyledListItemIcon>
                                 <AttachFileIcon />
                             </StyledListItemIcon>
@@ -78,7 +89,8 @@ export default function LeftNavbar() {
           />
           {isCategory && (
             <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton selected={selectedItem === 'Aktualności'} 
+                    onClick={() => handleItemClick('Aktualności')}>
                     <StyledListItemIcon>
                         <StyledListBox />
                     </StyledListItemIcon>
@@ -88,7 +100,9 @@ export default function LeftNavbar() {
             )}
           {items.map(element => (
             <ListItem disablePadding key={element}>
-              <ListItemButton>
+                <ListItemButton 
+                    selected={selectedItem === `${element}`} 
+                    onClick={() => handleItemClick(`${element}`)}>
                 <StyledListItemIcon>
                   {isCategory ? <StyledOtherListBox /> : <LocalOfferIcon fontSize="small" />}
                 </StyledListItemIcon>
@@ -97,7 +111,9 @@ export default function LeftNavbar() {
             </ListItem>
           ))}
           <ListItem disablePadding>
-            <ListItemButton>
+            <ListItemButton
+                selected={selectedItem === `Wszystkie ${title.toLowerCase()}`} 
+                onClick={() => handleItemClick(`Wszystkie ${title.toLowerCase()}`)}>
               <StyledListItemIcon>
                 <FormatListBulletedIcon />
               </StyledListItemIcon>

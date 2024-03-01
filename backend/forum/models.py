@@ -54,6 +54,10 @@ class ForumPost(db.Model):
     author = db.relationship(User, backref=db.backref('forum_posts', lazy=True))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    def __init__(self, title=None, description=None):
+        self.title = title
+        self.description = description
+
     def __repr__(self):
         return f'<id={self.id}, author={self.author}, title={self.title}>'
     

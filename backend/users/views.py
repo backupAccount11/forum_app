@@ -59,7 +59,7 @@ def registration():
                 app.logger.info('User already exists errors: %s', error_messages)
                 return jsonify({"success": False, "error": error_messages})
             
-            result = execute_insert_query(db.session, User, username=username, email=email, password=generate_password_hash(password, method='scrypt'))
+            result = execute_insert_query(db.session, model=User, username=username, email=email, password=generate_password_hash(password, method='scrypt'))
 
             if not result['success']:
                 return jsonify({"success": False, "message": "Wystąpił jakiś problem podczas rejestracji"})

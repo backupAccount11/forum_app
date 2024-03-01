@@ -30,6 +30,16 @@ def execute_insert_query(session, model, **kwargs):
         app.logger.info("Problem executing INSERT query: " + str(e))
         session.rollback()
         return False
+
+def execute_insert_query_obj(session, obj):
+    try:
+        session.add(obj)
+        session.commit()
+        return { 'success': True, 'data': obj }
+    except Exception as e:
+        app.logger.info("Problem executing INSERT query: " + str(e))
+        session.rollback()
+        return False
     
 
 def status_update_query(session, model, email, **kwargs):

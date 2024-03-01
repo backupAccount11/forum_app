@@ -39,13 +39,7 @@ export default function PostThreadDialog(props) {
     const [tags, setTags] = useState([]);
     const [chipInput, setChipInput] = useState('');  // for tags
 
-    const tempCategories = [
-        { cid: 1, category_name: 'Networking', color: 'green' },
-        { cid: 2, category_name: 'Windows server', color: 'yellow' },
-        { cid: 3, category_name: 'Cyberbezpieczeństwo', color: 'blue' }
-    ];
-
-    const [ availableCategories, setAvailableCategories ] = useState([]);
+    const [availableCategories, setAvailableCategories] = useState([]);
     const [loading, setLoading] = useState(true);
 
     function showModalError(value) {
@@ -65,6 +59,7 @@ export default function PostThreadDialog(props) {
             .then(response => {
                 if (response.data) {
                     setAvailableCategories(response.data);
+                    console.log(response.data);
                     setLoading(false);
                 }
             })
@@ -77,6 +72,9 @@ export default function PostThreadDialog(props) {
     const onSubmit = data => {
         data.categories = categories;
         data.tags = tags;
+
+        setCategories([]);
+        setTags([]);
 
         axios.post('/create_forumpost', data, {
             headers: {
@@ -150,7 +148,7 @@ export default function PostThreadDialog(props) {
 
                         {loading && <p>Wczytywanie danych...</p>}
 
-                        {!loading && availableCategories.map(category => (
+                        {!loading && Array.isArray(availableCategories) && availableCategories.map(category => (
                             <MenuItem key={category.id} value={category.name}>
                                 {category.name}
                             </MenuItem>
@@ -214,8 +212,6 @@ export default function PostThreadDialog(props) {
                 onClose={() => { 
                     props.interaction();
                     setLoading(false);
-                    setCategories([]); 
-                    setTags([]);
                 }}
                 scroll='paper'
                 PaperProps={{
