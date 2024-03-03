@@ -2,6 +2,7 @@ import re
 
 TITLE_MAX = 200
 DESCRIPTION_MAX = 1500
+COMMENT_MAX = 1200
 
 FIELD_REGEX = re.compile(r'^[a-zA-Z0-9_-]*$')
 CATEGORY_MAX = 5
@@ -30,3 +31,6 @@ def is_valid_title(title):
 
 def is_valid_description(description):
     return validate_length("Opis", description, DESCRIPTION_MAX)
+
+def is_valid_comment(comment):
+    return validate_length("Komentarz", comment, COMMENT_MAX)

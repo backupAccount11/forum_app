@@ -5,10 +5,10 @@ from flask import jsonify, request, session
 from flask_cors import cross_origin
 from flask_login import login_required
 
-from .validators import is_valid_title, is_valid_description, validate_categories, validate_tags
+from .validators import is_valid_title, is_valid_description, validate_categories, validate_tags, is_valid_comment
 
 from users.models import User
-from .models import ForumPost, Category, Tag
+from .models import ForumPost, Category, Tag, Comment
 
 
 @app.route("/get_categories", methods=['GET'])
@@ -98,6 +98,7 @@ def create_forumpost():
             return jsonify({"success": False, "error": str(e)})
 
 
+
 @app.route("/get_popular_posts", methods=['GET'])
 @cross_origin()
 def get_popular_posts():
@@ -115,15 +116,53 @@ def get_popular_posts():
             return jsonify({"success": False, "error": str(e)})
 
 
+
 @app.route("/get_current_post/<post_id>", methods=['GET'])
 @cross_origin()
 def get_current_post(post_id):
     if request.method == 'GET':
         try:
-            app.logger.info(f"You currently trying to view {post_id}")
             post = ForumPost.query.filter_by(id=post_id).first()
-            # comments = ForumComment.query.filter_by(post_id=post_id).all()
-            return jsonify({"success": True, "data": post.to_dict()}), 200
+            comments = Comment.query.filter_by(post_id=post_id).all()
+            comments_list = [comment.to_dict() for comment in comments]
+
+            return jsonify({"success": True, "data": {
+                "post": post.to_dict(),
+                "comments": comments_list
+            }}), 200
         except Exception as e:
             return jsonify({"success": False, "error": str(e)})
         
+
+
+@app.route("/add_comment", methods=['POST'])
+@cross_origin()
+def add_comment():
+    if request.method == 'POST':
+        try:
+            comment = request.form.get('comment')
+            post_id = request.form.get('post_id')
+
+            comment_error = is_valid_comment(comment)
+
+            if comment_error:
+                return jsonify({"success": False, "error": comment_error})
+
+            new_comment = Comment(content=comment, post_id=post_id)
+
+            author = User.query.filter_by(id=session['id']).first()
+
+            if not author:
+                return jsonify({"success": False, "error": "Wystąpił niezidentyfikowany błąd"})
+            
+            new_comment.author = author
+            new_comment.author_id = author.id
+
+            res_comment = execute_insert_query_obj(db.session, new_comment)
+
+            if res_comment:
+                app.logger.info(f"Comment added successfully: {res_comment}")
+
+            return jsonify({"success": True, "data": "New comment added successfully"})
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)})

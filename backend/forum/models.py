@@ -29,6 +29,7 @@ class Tag(db.Model):
     def to_dict(self):
         return { "id": self.id, "name": self.name, "counter": self.counter } 
 
+
 categories_table = db.Table('categories_table',
     db.Column('post_id', db.Integer, db.ForeignKey('forum_posts.id'), primary_key=True),
     db.Column('category_id', db.Integer, db.ForeignKey('categories.id'), primary_key=True)
@@ -39,9 +40,37 @@ tags_table = db.Table('tags_table',
     db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'), primary_key=True)
 )
 
+comments_table = db.Table('comments_table',
+    db.Column('post_id', db.Integer, db.ForeignKey('forum_posts.id'), primary_key=True),
+    db.Column('comment_id', db.Integer, db.ForeignKey('comments.id'), primary_key=True)
+)
 
-# many-to-many: post-tag, post-category
-# one-to-many: post-comment
+
+class Comment(db.Model):
+    __tablename__ = 'comments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(1200), unique=False, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    author = db.relationship('User', backref=db.backref('comments', lazy=True))
+    post_id = db.Column(db.Integer, db.ForeignKey('forum_posts.id'), nullable=False)
+
+    def __init__(self, content=None, post_id=None):
+        self.content = content
+        self.post_id = post_id
+
+    def __repr__(self):
+        return f'<id={self.id}, author={self.author}, content={self.content}, post_id={self.post_id}>'
+    
+    def to_dict(self):
+        return { 
+            "id": self.id,
+            "author": self.author.to_dict(),
+            "content": self.content,
+            "created_at": self.created_at.strftime('%m-%d-%Y %H:%M:%S')
+        }
+
 
 
 class ForumPost(db.Model):
@@ -55,8 +84,10 @@ class ForumPost(db.Model):
     tags = db.relationship('Tag', secondary=tags_table, backref='posts', lazy='dynamic')
 
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    author = db.relationship(User, backref=db.backref('forum_posts', lazy=True))
+    author = db.relationship('User', backref=db.backref('forum_posts', lazy=True))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    comments = db.relationship('Comment', secondary=comments_table, backref='posts', lazy='dynamic')
 
     def __init__(self, title=None, description=None):
         self.title = title

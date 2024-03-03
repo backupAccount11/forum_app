@@ -105,11 +105,11 @@ export default function MainSearchAppBar(props) {
   let showLoginButton = () => {
     let temp = '';
 
-    if (props.userInfo) {
+    if (props.userInfo && props.avatarColors) {
       temp = <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                 <StyledBasicButton sx={{ marginRight: 7 }} variant="contained" onClick={handleOpen}>Dodaj post</StyledBasicButton>
                 <PostThreadDialog interaction={handleClose} var={open} />
-                <Avatar sx={{ bgcolor: blue[600], width: 35, height: 35 }}> {props.userInfo.username[0].toUpperCase()} </Avatar>
+                <Avatar sx={{ bgcolor: props.avatarColors[props.userInfo.username[0].toUpperCase()], width: 35, height: 35 }}> {props.userInfo.username[0].toUpperCase()} </Avatar>
                 <StyledTypography>
                     {props.userInfo.username}
                 </StyledTypography>

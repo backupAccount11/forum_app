@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useSnackbar } from "notistack";
 import MainSearchAppBar from "../components/main_navbar";
@@ -10,12 +10,15 @@ import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlin
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Link } from "react-router-dom";
 import { dateFormat } from "../utils/dateFormat";
+import AvatarContext from "../utils/AvatarContext";
 
 
 export default function Home(props) {
 
   const [loading, setLoading] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
+
+  const avatarContext = useContext(AvatarContext);
 
   const [posts, setPosts] = useState([]);
 
@@ -53,7 +56,7 @@ export default function Home(props) {
         <LeftNavbar location="home" />
       </Grid>
       <Grid item md={10}>
-        <MainSearchAppBar userInfo={props.user} />
+        <MainSearchAppBar userInfo={props.user} avatarColors={avatarContext} />
         {loading && <LinearProgress color="primary" />}
 
         {!loading && posts &&
@@ -69,12 +72,17 @@ export default function Home(props) {
             {posts.map(post => (
               <Grid item key={post.id} sx={{ width: '90%', height: '140px' }}>
                 <Divider orientation="horizontal" />
-
                 <Card sx={{ display: 'flex', background: 'none', boxShadow: 'none', my: 1 }}>
-                  <Avatar sx={{ bgcolor: '#' + Math.floor(Math.random()*16777215).toString(16), width: 50, height: 50, mx: 2, my: 4 }}> {post.author.username[0].toUpperCase()} </Avatar>
+                  <Avatar sx={{ bgcolor: avatarContext[post.author.username[0].toUpperCase()], width: 50, height: 50, mx: 2, my: 4 }}> {post.author.username[0].toUpperCase()} </Avatar>
                   <Box sx={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
                     <CardContent>
                       <Typography component="div" variant="h5" sx={{ width: '50%' }}> <Link style={{ textDecoration: 'none', color: 'inherit' }} to={`/post/${post.id}`}>{post.title} </Link></Typography>
+                      <Typography component="div" variant="body2" sx={{ color: '#b3b3b3', pt: 1,
+                        width: '50%', display: '-webkit-box', WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden', WebkitLineClamp: 2, lineHeight: 1.5, textOverflow: 'ellipsis'
+                      }}> 
+                        {post.description}
+                      </Typography>
                       <List dense style={{ display: 'flex', flexDirection: 'row', padding: '10px 0' }}>
                         {post.categories.map(category => (
                           <Box key={category.id}>
