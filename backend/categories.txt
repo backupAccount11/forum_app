@@ -1,6 +1,6 @@
-Maszyny wirtualne, #E5B4BE
-Administracja Linux, #C898B0
-Cyberbezpieczeństwo, #78B0CE
+Maszyny wirtualne, #314d8c
+Administracja Linux, #007cbb
+Cyberbezpieczeństwo, #6b4983
 Podatności, #929DBE
 Debian, #7F9DB0
 Kryptologia, #E5B4BE

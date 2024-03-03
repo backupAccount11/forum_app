@@ -1,50 +1,20 @@
 import { useContext, useState } from "react";
 import UserContext from "../utils/UserContext";
 
-import styled from "@emotion/styled";
-import { Box, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { Grid, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import MovingIcon from '@mui/icons-material/Moving';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-
-
-const StyledBox = styled(Box)(({ theme }) => ({
-    height: '100vh',
-    paddingLeft: 8,
-    background: theme.palette.components.lnavbar.background,
-    boxShadow: 'none'
-}));
-
-const StyledListItemText = styled(ListItemText)(({ theme }) => ({
-    color: theme.palette.components.lnavbar.font,
-    marginInline: '-10px'
-}));
-
-const StyledListItemIcon = styled(ListItemIcon)(({ theme }) => ({
-    color: theme.palette.components.lnavbar.icon
-}));
-
-const StyledListBox = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    flexWrap: 'wrap',
-    marginInline: 5,
-    width: '15px',
-    height: '15px',
-    backgroundColor: theme.palette.components.lnavbar.listbox1
-}));
-
-const StyledOtherListBox = styled(StyledListBox)(({ theme }) => ({
-    backgroundColor: theme.palette.components.lnavbar.listboxother
-}));
+import { StyledBox, StyledListBox, StyledOtherListBox, StyledListItemText, StyledListItemIcon } from "../utils/styles";
 
 
 
-export default function LeftNavbar() {
+export default function LeftNavbar(props) {
     let { user } = useContext(UserContext);
 
-    const [selectedItem, setSelectedItem] = useState('Najpopularniejsze');
+    const [selectedItem, setSelectedItem] = useState(props.location === "home" ? 'Najpopularniejsze' : '');
 
     const handleItemClick = (index) => {
         setSelectedItem(index);
@@ -53,7 +23,7 @@ export default function LeftNavbar() {
     const firstBox = () => {
         return <List dense>
                     <ListItem disablePadding>
-                        <ListItemButton 
+                        <ListItemButton href="/"
                             selected={selectedItem === 'Najpopularniejsze'} 
                             onClick={() => handleItemClick('Najpopularniejsze')}>
                             <StyledListItemIcon>

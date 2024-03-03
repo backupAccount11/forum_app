@@ -11,7 +11,9 @@ class Category(db.Model):
 
     def __repr__(self):
         return f'<id={self.id}, name={self.name}, color={self.color}>'
-
+    
+    def to_dict(self):
+        return { "id": self.id, "name": self.name, "color": self.color } 
 
 
 class Tag(db.Model):
@@ -23,7 +25,9 @@ class Tag(db.Model):
 
     def __repr__(self):
         return f'<id={self.id}, name={self.name}, counter={self.counter}>'
-
+    
+    def to_dict(self):
+        return { "id": self.id, "name": self.name, "counter": self.counter } 
 
 categories_table = db.Table('categories_table',
     db.Column('post_id', db.Integer, db.ForeignKey('forum_posts.id'), primary_key=True),
@@ -61,3 +65,14 @@ class ForumPost(db.Model):
     def __repr__(self):
         return f'<id={self.id}, author={self.author}, title={self.title}>'
     
+    def to_dict(self):
+        return { 
+            "id": self.id, 
+            "title": self.title, 
+            "description": self.description,
+            "likes": self.likes,
+            "author": self.author.to_dict(),
+            "created_at": self.created_at.strftime('%m-%d-%Y %H:%M:%S'),
+            "tags": [tag.to_dict() for tag in self.tags],
+            "categories": [category.to_dict() for category in self.categories]
+        }

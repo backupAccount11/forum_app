@@ -3,7 +3,7 @@ import re
 TITLE_MAX = 200
 DESCRIPTION_MAX = 1500
 
-FIELD_REGEX = re.compile(r'^[a-zA-Z0-9_]*$')
+FIELD_REGEX = re.compile(r'^[a-zA-Z0-9_-]*$')
 CATEGORY_MAX = 5
 TAGS_MAX = 9
 

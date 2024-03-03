@@ -3,99 +3,20 @@ import axios from 'axios';
 import UserContext from '../utils/UserContext';
 import { useNavigate } from 'react-router-dom';
 
-import { styled, alpha } from '@mui/material/styles';
-import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
-import InputBase from '@mui/material/InputBase';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import { Avatar, Button, Typography } from '@mui/material';
+import { Avatar } from '@mui/material';
 
 import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
 import { blue } from '@mui/material/colors';
 import PostThreadDialog from './dialog_post_thread';
-import { StyledBasicButton } from '../utils/styles';
-
-
-
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderColor: theme.palette.components.mnavbar.searchbar.border,
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: theme.palette.background.default,
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.background.default, 0.70),
-  },
-  boxShadow: 0,
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(3),
-    width: 'auto',
-  },
-}));
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  color: theme.palette.components.mnavbar.searchbar.icon,
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center'
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-   color: theme.palette.components.mnavbar.searchbar.color ,
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '20ch',
-    },
-  },
-}));
-
-const StyledTypography = styled(Typography)(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    height: '100%',
-    letterSpacing: '0.5px',
-    margin: 'auto',
-    color: theme.palette.components.mnavbar.main,
-    padding: theme.spacing(0, 3, 0, 1)
-}));
-
-const StyledButton = styled(Button)(({ theme }) => ({
-    minWidth: 34,
-    height: 34,
-    padding: 8,
-    margin: 'auto 0',
-    borderRadius: 12,
-    borderWidth: '0.5px',
-    fontSize: '1.5rem',
-    color: theme.palette.components.mnavbar.iconbuttons.icon,
-    backgroundColor: 'transparent',
-    boxShadow: 'inset 0 1px 2px var(--muidocs-palette-grey-50),0 1px 0.5px rgba(229, 234, 242, 0.6)',
-    '& .MuiSvgIcon-root': {
-      fontSize: 20
-    },
-}));
-
-const StyledAppBar = styled(AppBar)(({ theme }) => ({
-    background: theme.palette.background.default,
-    boxShadow: 'none'
-}));
+import { StyledAppBar, StyledButton, StyledBasicButton, Search, SearchIconWrapper, StyledInputBase, StyledTypography } from '../utils/styles';
 
 
 
@@ -211,7 +132,7 @@ export default function MainSearchAppBar(props) {
     <Box sx={{ flexGrow: 1 }}>
       <StyledAppBar position="static">
         <Toolbar>
-          <Search>
+          {/* <Search>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
@@ -219,7 +140,7 @@ export default function MainSearchAppBar(props) {
               placeholder="Search…"
               inputProps={{ 'aria-label': 'search' }}
             />
-          </Search>
+          </Search> */}
           <Box sx={{ flexGrow: 1 }} />
 
           { showLoginButton() }

@@ -16,6 +16,9 @@ import { grey, blue, amber } from '@mui/material/colors';
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
+    text: {
+      primary: '#dfdfdf'
+    },
     background: {
       default: '#070223',
       button: blue[600]
@@ -55,7 +58,7 @@ root.render(
     <UserProvider>
         <ThemeProvider theme={darkTheme}>
           <CssBaseline />
-          <SnackbarProvider maxSnack={4} autoHideDuration={8000}>
+          <SnackbarProvider maxSnack={4} autoHideDuration={7000}>
             <App />
           </SnackbarProvider>
         </ThemeProvider>

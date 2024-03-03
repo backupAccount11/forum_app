@@ -91,10 +91,8 @@ def create_forumpost():
             if res_forumpost:
                 app.logger.info(f"Forum post added successfully: {res_forumpost}")
             
-            
             # TODO: przesłać prompty do logstasha żeby wyalertować potencjalne sql injection
 
-        
             return jsonify({"success": True, "message": "Post added successfully", })
         except Exception as e:
             return jsonify({"success": False, "error": str(e)})
@@ -106,21 +104,26 @@ def get_popular_posts():
     if request.method == 'GET':
         try:
             posts = ForumPost.query.order_by(ForumPost.likes.desc()).all()
-            posts_list = [{'id': post.id, 'name': post.name, 'description': post.description,
-                           'likes': post.liked, 'author': post.author, 'categories': post.categories,
-                            'tags': post.tags, 'created_at': post.created_at } for post in posts]
-            return jsonify(posts_list)
+            posts_list = []
+
+            for post in posts:
+                author = User.query.filter_by(id=post.author.id).first()
+                if author:
+                    posts_list.append(post.to_dict())
+            return jsonify({"success": True, "data": posts_list}), 200
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)})
+
+
+@app.route("/get_current_post/<post_id>", methods=['GET'])
+@cross_origin()
+def get_current_post(post_id):
+    if request.method == 'GET':
+        try:
+            app.logger.info(f"You currently trying to view {post_id}")
+            post = ForumPost.query.filter_by(id=post_id).first()
+            # comments = ForumComment.query.filter_by(post_id=post_id).all()
+            return jsonify({"success": True, "data": post.to_dict()}), 200
         except Exception as e:
             return jsonify({"success": False, "error": str(e)})
         
-
-# @app.route("/get_user_posts/<user_id>", methods=['GET'])
-# @cross_origin()
-# def get_user_posts(user_id):
-#     if request.method == 'GET':
-#         try:
-#             categories = Category.query.all()
-#             categories_list = [{'id': category.id, 'name': category.name, 'color': category.color} for category in categories]
-#             return jsonify(categories_list)
-#         except Exception as e:
-#             return jsonify({"success": False, "error": str(e)})
