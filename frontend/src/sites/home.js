@@ -51,7 +51,6 @@ export default function Home({ user, avatarColors }) {
     }
     else if (foundTag != null) {
       setRoute('/get_tag_posts/' + foundTag.id);
-      //TODO: naprawić endpointa
     }
 
     setLoading(true);

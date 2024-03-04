@@ -191,14 +191,12 @@ def get_category_posts(category_id):
 def get_tag_posts(tag_id):
     if request.method == 'GET':
         try:
-            # TODO: poprawić endpoint
+            if not tag_id:
+                return jsonify({"success": False, "error": "Wystąpił niezidentyfikowany błąd"})
             
-            # if not tag_id:
-            #     return jsonify({"success": False, "error": "Wystąpił niezidentyfikowany błąd"})
-            
-            # posts = ForumPost.query.join(ForumPost.tags).filter(Tag.id == tag_id).all()
-            # posts_list = [post.to_dict() for post in posts]
-            return jsonify({"success": True, "data": ""}), 200
+            posts = ForumPost.query.join(ForumPost.tags).filter(Tag.id == tag_id).all()
+            posts_list = [post.to_dict() for post in posts]
+            return jsonify({"success": True, "data": posts_list}), 200
         except Exception as e:
             return jsonify({"success": False, "error": str(e)})
 
