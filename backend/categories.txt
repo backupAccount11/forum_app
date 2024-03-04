@@ -9,5 +9,3 @@ Macierze RAID, #78B0CE
 Automatyzacja & DevOps, #C898B0
 Raspberry Pi, #E5B4BE
 Kubernetes, #78B0CE
-Systemy Embedded, #929DBE
-Monitoring, #C898B0

@@ -14,7 +14,6 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import { Avatar } from '@mui/material';
 
 import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
-import { blue } from '@mui/material/colors';
 import PostThreadDialog from './dialog_post_thread';
 import { StyledAppBar, StyledButton, StyledBasicButton, Search, SearchIconWrapper, StyledInputBase, StyledTypography } from '../utils/styles';
 

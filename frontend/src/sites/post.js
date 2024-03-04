@@ -1,19 +1,15 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSnackbar } from "notistack";
-import LeftNavbar from "../components/left_navbar";
 import { Avatar, Box, Button, Card, CardContent, Chip, Divider, Grid, InputLabel, List, ListItem, OutlinedInput, Stack, Typography } from "@mui/material";
-import MainSearchAppBar from "../components/main_navbar";
-import { useParams } from "react-router-dom";
 import { StyledBasicButton, StyledListBox, StyledListItemIcon, StyledListItemText } from "../utils/styles";
 import { dateFormat } from "../utils/dateFormat";
-import AvatarContext from "../utils/AvatarContext";
 
 import SendIcon from '@mui/icons-material/Send';
 import { useForm } from "react-hook-form";
 
 
-export default function Post(props) {
+export default function Post({ user, post_id, avatarColors}) {
   const { 
     register, 
     handleSubmit,
@@ -23,10 +19,6 @@ export default function Post(props) {
         comment: ''
     }
   });
-
-  const { post_id } = useParams();
-
-  const avatarContext = useContext(AvatarContext);
 
   const [loading, setLoading] = useState(true);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -107,13 +99,7 @@ export default function Post(props) {
 
 
   return (
-    <Grid container spacing={4}>
-      <Grid item md={2}>
-        <LeftNavbar location="post" />
-      </Grid>
-      <Grid item md={10}>
-        <MainSearchAppBar userInfo={props.user} avatarColors={avatarContext} />
-
+    <Box>
         {!loading && post &&
             <Grid
                 justifyContent="flex-start" 
@@ -140,7 +126,7 @@ export default function Post(props) {
 
                 <Card sx={{ display: 'flex', background: 'none', boxShadow: 'none', my: 2 }}>
                   <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: 'center' }}>
-                    <Avatar sx={{ bgcolor: avatarContext[post.author.username[0].toUpperCase()], width: 50, height: 50, mx: 2, mt: 4, mb: 1 }}> {post.author.username[0].toUpperCase()} </Avatar>
+                    <Avatar sx={{ bgcolor: avatarColors[post.author.username[0].toUpperCase()], width: 50, height: 50, mx: 2, mt: 4, mb: 1 }}> {post.author.username[0].toUpperCase()} </Avatar>
                     <Typography variant="body2" sx={{ fontSize: '14px' }}>{post.author.username}</Typography>
                   </Box>
                   <Box sx={{ display: 'flex', flexDirection: 'column', width: '55%', pt: 2 }}>
@@ -164,10 +150,9 @@ export default function Post(props) {
                       <Box key={c.id}>
                         <Card sx={{ display: 'flex', background: 'none', boxShadow: 'none', ml: 2, my: 2 }}>
                           <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: 'center' }}>
-                            <Avatar sx={{ bgcolor: avatarContext[c.author.username[0].toUpperCase()], width: 45, height: 45, mx: 2, mt: 4, mb: 1 }}> {c.author.username[0].toUpperCase()} </Avatar>
+                            <Avatar sx={{ bgcolor: avatarColors[c.author.username[0].toUpperCase()], width: 45, height: 45, mx: 2, mt: 4, mb: 1 }}> {c.author.username[0].toUpperCase()} </Avatar>
                             <Typography variant="body2" sx={{ fontSize: '13px' }}>{c.author.username}</Typography>
                           </Box>
-                          {/* <Avatar sx={{ bgcolor: avatarContext[c.author.username[0].toUpperCase()], width: 40, height: 40, mx: 2, my: 4 }}> {c.author.username[0].toUpperCase()} </Avatar> */}
                           <Box sx={{ display: 'flex', flexDirection: 'column', width: '55%', pt: 2 }}>
                             <CardContent>
                               <Typography variant="body1" style={{ fontSize: '16px', whiteSpace: 'pre-wrap', overflowWrap: 'break-word', marginBottom: 10 }}>{c.content}</Typography>
@@ -181,7 +166,7 @@ export default function Post(props) {
                   </Box>
                 }
 
-                {!props.user &&
+                {!user &&
                   <Box sx={{ width: '70%', py: 5 }} component="form" onSubmit={handleSubmit(onSubmit)}>
                     <InputLabel htmlFor="description-input" sx={{ pb: 2 }}>Wprowadź poniżej treść swojego komentarza</InputLabel>
                     <OutlinedInput id="description-input" disabled color="primary" size="small" fullWidth multiline minRows={8}
@@ -192,7 +177,7 @@ export default function Post(props) {
                   </Box>
                 }
 
-                {props.user &&
+                {user &&
                   <Box sx={{ width: '70%', py: 5 }} component="form" onSubmit={handleSubmit(onSubmit)}>
                     <InputLabel htmlFor="description-input" sx={{ pb: 2 }}>Wprowadź poniżej treść swojego komentarza</InputLabel>
                     <OutlinedInput id="description-input" color="primary" size="small" fullWidth multiline minRows={8}
@@ -205,7 +190,6 @@ export default function Post(props) {
                 }
             </Grid>
         }
-      </Grid>
-    </Grid>
+    </Box>
   );
 };

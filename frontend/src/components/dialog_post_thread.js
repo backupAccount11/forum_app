@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { useForm } from "react-hook-form";
 import axios from 'axios';
 
@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import { StyledBasicButton } from '../utils/styles';
 import { StyledDialog } from '../utils/styles';
 import { useSnackbar } from 'notistack';
+import AvailableCategoriesContext from '../utils/CategoriesContext';
 
 
 
@@ -39,8 +40,7 @@ export default function PostThreadDialog(props) {
     const [tags, setTags] = useState([]);
     const [chipInput, setChipInput] = useState('');  // for tags
 
-    const [availableCategories, setAvailableCategories] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const availableCategories = useContext(AvailableCategoriesContext);
 
     function showModalError(value) {
         enqueueSnackbar(value, { variant: 'error', anchorOrigin: {
@@ -48,26 +48,6 @@ export default function PostThreadDialog(props) {
             vertical: 'bottom' 
         } });
     }
-
-    useEffect(() => {
-        if (props.var && availableCategories.length === 0) {
-            axios.get('/get_categories', {
-                headers: {
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => {
-                if (response.data) {
-                    setAvailableCategories(response.data);
-                    console.log(response.data);
-                    setLoading(false);
-                }
-            })
-            .catch( _ => {
-                showModalError("Błąd podczas pobierania danych");
-            });
-        }
-    }, [props.var, availableCategories]);
 
     const onSubmit = data => {
         data.categories = categories;
@@ -86,8 +66,6 @@ export default function PostThreadDialog(props) {
           .then((response) => {
             const { success, error } = response.data;
 
-            console.log(response.data);
-
             if (success) {
                 enqueueSnackbar("Post został dodany pomyślnie", { variant: 'success', anchorOrigin: {
                     horizontal: 'right',
@@ -95,7 +73,6 @@ export default function PostThreadDialog(props) {
                 } });
         
                 props.interaction(); // close dialog
-                setLoading(false);
                 reset();
 
                 setTimeout(() => {
@@ -146,9 +123,9 @@ export default function PostThreadDialog(props) {
                         MenuProps={MenuProps}
                     > 
 
-                        {loading && <p>Wczytywanie danych...</p>}
+                        {!availableCategories && <p>Wczytywanie danych...</p>}
 
-                        {!loading && Array.isArray(availableCategories) && availableCategories.map(category => (
+                        {availableCategories && availableCategories.map(category => (
                             <MenuItem key={category.id} value={category.name}>
                                 {category.name}
                             </MenuItem>
@@ -211,7 +188,6 @@ export default function PostThreadDialog(props) {
                 open={props.var}
                 onClose={() => { 
                     props.interaction();
-                    setLoading(false);
                 }}
                 scroll='paper'
                 PaperProps={{

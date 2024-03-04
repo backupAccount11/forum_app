@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
@@ -12,6 +12,8 @@ import { UserProvider } from './utils/UserContext';
 
 import { grey, blue, amber } from '@mui/material/colors';
 import AvatarContext from './utils/AvatarContext';
+import { SelectedItemProvider } from './utils/FilterContext';
+import { AvailableCategoriesProvider } from './utils/CategoriesContext';
 
 
 const darkTheme = createTheme({
@@ -53,12 +55,11 @@ const darkTheme = createTheme({
 });
 
 const avatarColors = {
-  'A': '#1e88e5', 'B': '#b2d7e9', 'C': '#133c3e', 'D': '#f2819b', 'E': '#927681', 
-  'F': '#e99184', 'G': '#5d8c1a', 'H': '#254f39', 'I': '#8497b5', 'J': '#f6d55c', 
-  'K': '#ed553b', 'L': '#3caea3', 'M': '#20639b', 'N': '#173f5f', 'O': '#d0a228',
-  'P': '#542843', 'Q': '#cc3033', 'R': '#a14d1f', 'S': '#9b58b5', 'T': '#ef2e33',
-  'U': '#4f525d', 'V': '#4b1e19', 'W': '#680e03', 'X': '#fe8b4c', 'Y': '#ec9811', 
-  'Z': '#fc5e1d'
+  'A': '#1e88e5', 'B': '#b2d7e9', 'C': '#133c3e', 'D': '#f2819b', 'E': '#927681', 'F': '#e99184', 
+  'G': '#5d8c1a', 'H': '#254f39', 'I': '#8497b5', 'J': '#f6d55c', 'K': '#ed553b', 'L': '#3caea3', 
+  'M': '#20639b', 'N': '#173f5f', 'O': '#d0a228', 'P': '#542843', 'Q': '#cc3033', 'R': '#a14d1f', 
+  'S': '#9b58b5', 'T': '#ef2e33', 'U': '#4f525d', 'V': '#4b1e19', 'W': '#680e03', 'X': '#fe8b4c', 
+  'Y': '#ec9811', 'Z': '#fc5e1d'
 };
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -66,14 +67,18 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <UserProvider>
-      <AvatarContext.Provider value={avatarColors}>
-          <ThemeProvider theme={darkTheme}>
-            <CssBaseline />
-            <SnackbarProvider maxSnack={4} autoHideDuration={7000}>
-              <App />
-            </SnackbarProvider>
-          </ThemeProvider>
-        </AvatarContext.Provider>
+      <AvailableCategoriesProvider>
+        <SelectedItemProvider>
+          <AvatarContext.Provider value={avatarColors}>
+              <ThemeProvider theme={darkTheme}>
+                <CssBaseline />
+                <SnackbarProvider maxSnack={4} autoHideDuration={7000}>
+                  <App />
+                </SnackbarProvider>
+              </ThemeProvider>
+            </AvatarContext.Provider>
+          </SelectedItemProvider>
+        </AvailableCategoriesProvider>
       </UserProvider>
   </React.StrictMode>
 );

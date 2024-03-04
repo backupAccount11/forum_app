@@ -98,6 +98,7 @@ def create_forumpost():
             return jsonify({"success": False, "error": str(e)})
 
 
+# __________________ FILTERS
 
 @app.route("/get_popular_posts", methods=['GET'])
 @cross_origin()
@@ -117,6 +118,37 @@ def get_popular_posts():
 
 
 
+@app.route("/get_user_posts/<user_id>", methods=['GET'])
+@cross_origin()
+def get_user_posts(user_id):
+    if request.method == 'GET':
+        try:
+            user = User.query.filter_by(id=user_id).first()
+            if not user:
+                return jsonify({"success": False, "error": "Wystąpił niezidentyfikowany błąd"})
+            
+            posts = ForumPost.query.filter_by(author_id=user_id).all()
+            posts_list = [post.to_dict() for post in posts]
+            return jsonify({"success": True, "data": posts_list}), 200
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)})
+
+
+@app.route("/get_category_posts/<category_id>", methods=['GET'])
+@cross_origin()
+def get_category_posts(category_id):
+    if request.method == 'GET':
+        try:
+            # posts = ForumPost.query.filter_by(category=).all()
+            # posts_list = [post.to_dict() for post in posts]
+            return jsonify({"success": True, "data": ""}), 200
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)})
+
+
+
+# _________________ ASSOCIATED WITH SINGLE POST
+
 @app.route("/get_current_post/<post_id>", methods=['GET'])
 @cross_origin()
 def get_current_post(post_id):
@@ -132,7 +164,7 @@ def get_current_post(post_id):
             }}), 200
         except Exception as e:
             return jsonify({"success": False, "error": str(e)})
-        
+
 
 
 @app.route("/add_comment", methods=['POST'])
@@ -144,12 +176,10 @@ def add_comment():
             post_id = request.form.get('post_id')
 
             comment_error = is_valid_comment(comment)
-
             if comment_error:
                 return jsonify({"success": False, "error": comment_error})
 
             new_comment = Comment(content=comment, post_id=post_id)
-
             author = User.query.filter_by(id=session['id']).first()
 
             if not author:
@@ -157,7 +187,6 @@ def add_comment():
             
             new_comment.author = author
             new_comment.author_id = author.id
-
             res_comment = execute_insert_query_obj(db.session, new_comment)
 
             if res_comment:
