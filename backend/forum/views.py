@@ -98,7 +98,42 @@ def create_forumpost():
             return jsonify({"success": False, "error": str(e)})
 
 
+
+# _____________ GET THREE MOST POPULAR TAGS
+
+
+@app.route("/get_popular_tags", methods=['GET'])
+@cross_origin()
+def get_popular_tags():
+    if request.method == 'GET':
+        try:
+            tags = Tag.query.order_by(Tag.counter.desc()).limit(3).all()
+            tags_list = [tag.to_dict() for tag in tags]
+            return jsonify({"success": True, "data": tags_list}), 200
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)})
+
+
 # __________________ FILTERS
+
+
+@app.route("/get_latest_posts", methods=['GET'])
+@cross_origin()
+def get_latest_posts():
+    if request.method == 'GET':
+        try:
+            posts = ForumPost.query.order_by(ForumPost.created_at.desc()).all()
+            posts_list = []
+
+            for post in posts:
+                author = User.query.filter_by(id=post.author.id).first()
+                if author:
+                    posts_list.append(post.to_dict())
+            return jsonify({"success": True, "data": posts_list}), 200
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)})
+
+
 
 @app.route("/get_popular_posts", methods=['GET'])
 @cross_origin()
@@ -134,12 +169,34 @@ def get_user_posts(user_id):
             return jsonify({"success": False, "error": str(e)})
 
 
+
 @app.route("/get_category_posts/<category_id>", methods=['GET'])
 @cross_origin()
 def get_category_posts(category_id):
     if request.method == 'GET':
         try:
-            # posts = ForumPost.query.filter_by(category=).all()
+            if not category_id:
+                return jsonify({"success": False, "error": "Wystąpił niezidentyfikowany błąd"})
+            
+            posts = ForumPost.query.join(ForumPost.categories).filter(Category.id == category_id).all()
+            posts_list = [post.to_dict() for post in posts]
+            return jsonify({"success": True, "data": posts_list}), 200
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)})
+
+
+
+@app.route("/get_tag_posts/<tag_id>", methods=['GET'])
+@cross_origin()
+def get_tag_posts(tag_id):
+    if request.method == 'GET':
+        try:
+            # TODO: poprawić endpoint
+            
+            # if not tag_id:
+            #     return jsonify({"success": False, "error": "Wystąpił niezidentyfikowany błąd"})
+            
+            # posts = ForumPost.query.join(ForumPost.tags).filter(Tag.id == tag_id).all()
             # posts_list = [post.to_dict() for post in posts]
             return jsonify({"success": True, "data": ""}), 200
         except Exception as e:

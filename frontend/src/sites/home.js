@@ -9,11 +9,15 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Link } from "react-router-dom";
 import SelectedItemContext from "../utils/FilterContext";
 import { dateFormat } from "../utils/dateFormat";
+import AvailableCategoriesContext from "../utils/CategoriesContext";
+import PopularTagsContext from "../utils/TagsContext";
 
 
 
 export default function Home({ user, avatarColors }) {
   const { selectedItem } = useContext(SelectedItemContext);
+  const availableCategories = useContext(AvailableCategoriesContext);
+  const popularTags = useContext(PopularTagsContext);
 
   const [loading, setLoading] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
@@ -30,12 +34,26 @@ export default function Home({ user, avatarColors }) {
   }
 
   useEffect(() => {
+    const foundCategory = availableCategories.find(category => category.name === selectedItem);
+    const foundTag = popularTags.find(tag => tag.name === selectedItem);
+
     if (selectedItem == 'Najpopularniejsze') {
       setRoute('/get_popular_posts');
-    } 
+    }
     else if (user && selectedItem == 'Moje posty') {
       setRoute('/get_user_posts/' + user.id);
     }
+    else if (foundCategory != null) {
+      setRoute('/get_category_posts/' + foundCategory.id);
+    }
+    else if (selectedItem == 'Wszystkie kategorie' || selectedItem == 'Wszystkie tagi') {
+      setRoute('/get_latest_posts');
+    }
+    else if (foundTag != null) {
+      setRoute('/get_tag_posts/' + foundTag.id);
+      //TODO: naprawić endpointa
+    }
+
     setLoading(true);
 
   }, [selectedItem]);
@@ -79,7 +97,7 @@ export default function Home({ user, avatarColors }) {
             {selectedItem}
           </Typography>
           {posts.map(post => (
-            <Grid item key={post.id} sx={{ width: '90%', height: '140px', mt: 2 }}>
+            <Grid item key={post.id} sx={{ width: '90%', height: '140px', my: 2 }}>
               <Divider orientation="horizontal" />
               <Card sx={{ display: 'flex', background: 'none', boxShadow: 'none', my: 1 }}>
                 <Avatar sx={{ bgcolor: avatarColors[post.author.username[0].toUpperCase()], width: 50, height: 50, mx: 2, my: 4 }}> {post.author.username[0].toUpperCase()} </Avatar>

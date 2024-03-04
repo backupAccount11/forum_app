@@ -14,6 +14,7 @@ import { grey, blue, amber } from '@mui/material/colors';
 import AvatarContext from './utils/AvatarContext';
 import { SelectedItemProvider } from './utils/FilterContext';
 import { AvailableCategoriesProvider } from './utils/CategoriesContext';
+import { PopularTagsProvider } from './utils/TagsContext';
 
 
 const darkTheme = createTheme({
@@ -67,18 +68,20 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <UserProvider>
-      <AvailableCategoriesProvider>
-        <SelectedItemProvider>
-          <AvatarContext.Provider value={avatarColors}>
-              <ThemeProvider theme={darkTheme}>
-                <CssBaseline />
-                <SnackbarProvider maxSnack={4} autoHideDuration={7000}>
-                  <App />
-                </SnackbarProvider>
-              </ThemeProvider>
-            </AvatarContext.Provider>
-          </SelectedItemProvider>
-        </AvailableCategoriesProvider>
+      <PopularTagsProvider>
+        <AvailableCategoriesProvider>
+          <SelectedItemProvider>
+            <AvatarContext.Provider value={avatarColors}>
+                <ThemeProvider theme={darkTheme}>
+                  <CssBaseline />
+                  <SnackbarProvider maxSnack={4} autoHideDuration={7000}>
+                    <App />
+                  </SnackbarProvider>
+                </ThemeProvider>
+              </AvatarContext.Provider>
+            </SelectedItemProvider>
+          </AvailableCategoriesProvider>
+        </PopularTagsProvider>
       </UserProvider>
   </React.StrictMode>
 );
