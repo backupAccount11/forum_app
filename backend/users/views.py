@@ -9,6 +9,8 @@ from main import app, db, execute_insert_query, status_update_query
 from .validators import is_valid_username, is_valid_email, is_password_valid
 from .models import User
 
+from . import login_logger, register_logger, session_logger
+
 
 def set_session_cookie(user: User):
     attributes = ['id', 'username', 'email']
@@ -47,7 +49,7 @@ def registration():
                 error_messages["password"] = "Podano błędne hasło"
 
             if error_messages:
-                app.logger.info('Registration errors: %s', error_messages)
+                register_logger.error(f'USER ENTERED INVALID DATA, REGISTRATION: {error_messages}, EMAIL ENTERED: {email}, USERNAME: {username}')
                 return jsonify({"success": False, "error": error_messages})
 
             if User.query.filter_by(username=username).first():
@@ -66,6 +68,8 @@ def registration():
             
             set_session_cookie(result['data'])
             user_data = { attribute: session.get(attribute) for attribute in ['id', 'username', 'email'] }
+
+            register_logger.info(f'USER REGISTERED SUCCESSFULLY {user_data}')
             
             return jsonify({"success": True, "message": "Registration successful", "user_data": user_data})
         except Exception as e:
@@ -89,7 +93,7 @@ def login():
                 error_messages["password"] = "Podano błędne hasło"
 
             if error_messages:
-                app.logger.info('Login errors: %s', error_messages)
+                login_logger.error(f'USER ENTERED INVALID DATA, LOGIN: {error_messages}, EMAIL ENTERED: {email}')
                 return jsonify({"success": False, "error": error_messages})
             
             db_user = User.query.filter_by(email=email).first()
@@ -109,6 +113,8 @@ def login():
             
             set_session_cookie(db_user)
             user_data = { attribute: session.get(attribute) for attribute in ['id', 'username', 'email'] }
+
+            login_logger.info(f'USER REQUESTED LOGIN {user_data}')
             
             return jsonify({"success": True, "message": "Login successful", "user_data": user_data})
         except Exception as e:
@@ -143,14 +149,15 @@ def logout():
 
             if not result:
                 return jsonify({"success": False, "message": "Wystąpił jakiś problem podczas wylogowywania"})
-            
-            clear_session_cookie()
 
             if session["login_time"]:
                 current_time = datetime.datetime.now().timestamp()
                 session_duration = current_time - session["login_time"]
-                # TODO: Session duration: {session_duration} seconds - send that do logstash 
-    
+
+                session_logger.info(f'USER REQUESTED LOGOUT, SESSION DURATION (IN SECONDS): {session_duration}, FOR USER WITH USERNAME: {session["username"]}, EMAIL: {session["email"]}, ID: {session["id"]}')
+
+            clear_session_cookie()
+
             return jsonify({"success": True, "message": "Logout successful"})
         except Exception as e:
             return jsonify({"success": False, "error": str(e)})

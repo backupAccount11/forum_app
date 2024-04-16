@@ -97,16 +97,16 @@ export function SignUp() {
 
         <Box sx={{ p: 5 }}>
           <InputLabel htmlFor="my-input">Username</InputLabel>
-          <OutlinedInput id="my-input" color="success" size="small" fullWidth
+          <OutlinedInput id="my-input" color="primary" size="small" fullWidth
             {...register("username", { required: true })} />
           <FormHelperText id="my-helper-text">{usernameHelperText}</FormHelperText>
 
           <InputLabel htmlFor="email-input" sx={{ pt: 2 }}>E-mail</InputLabel>
-          <OutlinedInput id="email-input" color="success" size="small" fullWidth
+          <OutlinedInput id="email-input" color="primary" size="small" fullWidth
             {...register("email", { required: true })} />
 
           <InputLabel htmlFor="my-input3" sx={{ pt: 2 }}>Password</InputLabel>
-          <OutlinedInput id="my-input2" color="success" size="small" fullWidth type="password"
+          <OutlinedInput id="my-input2" color="primary" size="small" fullWidth type="password"
             {...register("password", { required: true })} />
           <FormHelperText id="my-helper-text">{passwordHelperText}</FormHelperText>
         </Box>

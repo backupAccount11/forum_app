@@ -1,0 +1,3 @@
+2024-04-16 21:58:45,021 - ERROR - USER ENTERED INVALID DATA, REGISTRATION: {'email': 'Podano błędny e-mail', 'password': 'Podano błędne hasło'}, EMAIL ENTERED: das, USERNAME: asd
+2024-04-16 22:01:19,616 - ERROR - USER ENTERED INVALID DATA, REGISTRATION: {'username': 'Podano błędną nazwę użytkownika'}, EMAIL ENTERED: isaacd@test.com, USERNAME: Isaac D
+2024-04-16 22:01:43,178 - INFO - USER REGISTERED SUCCESSFULLY {'id': 12, 'username': 'IsaacD', 'email': 'isaacd@test.com'}

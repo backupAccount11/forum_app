@@ -23,7 +23,7 @@ export default function LeftNavbar({ post_id }) {
 
   useEffect(() => {
     if (post_id == null) {
-      setSelectedItem('Najpopularniejsze');
+      setSelectedItem('Wszystkie posty');
     } else {
       setSelectedItem(null);
     }

@@ -95,11 +95,11 @@ export function Login() {
 
         <Box sx={{ px: 5, py: 7 }}>
             <InputLabel htmlFor="email-input" sx={{ pt: 2 }}>E-mail</InputLabel>
-            <OutlinedInput id="email-input" color="success" size="small" fullWidth
+            <OutlinedInput id="email-input" color="primary" size="small" fullWidth
               {...register("email", { required: true })} />
 
             <InputLabel htmlFor="my-input3" sx={{ pt: 2 }}>Hasło</InputLabel>
-            <OutlinedInput id="my-input" color="success" size="small" fullWidth type="password"
+            <OutlinedInput id="my-input" color="primary" size="small" fullWidth type="password"
               {...register("password", { required: true })} />
         </Box>
 

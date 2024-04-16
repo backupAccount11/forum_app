@@ -36,7 +36,7 @@ export default function Home({ user, avatarColors }) {
     const foundCategory = availableCategories.find(category => category.name === selectedItem);
     const foundTag = popularTags.find(tag => tag.name === selectedItem);
 
-    if (selectedItem ===  'Najpopularniejsze') {
+    if (selectedItem ===  'Wszystkie posty') {
       setRoute('/get_popular_posts');
     }
     else if (user && selectedItem === 'Moje posty') {
@@ -129,11 +129,7 @@ export default function Home({ user, avatarColors }) {
                     </Stack>
                   </CardContent>
                 </Box>
-                <Box sx={{ width: '10%', margin: 'auto' }}>
-                  <IconButton color="primary" aria-label="like this post" size="large" sx={{ width: '60%', display: 'flex', flexDirection: 'column' }}>
-                    <FavoriteBorderOutlinedIcon fontSize="inherit" />
-                    <Typography variant="body1" gutterBottom> {post.likes} </Typography>
-                  </IconButton>
+                <Box sx={{ width: '10%', margin: '10% auto' }}>
                   <Typography variant="body2" gutterBottom sx={{ mr: 3 }}> {dateFormat(post.created_at)} </Typography>
                 </Box>
               </Card>
