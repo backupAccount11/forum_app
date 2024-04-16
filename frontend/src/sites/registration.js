@@ -84,13 +84,9 @@ export function SignUp() {
 
 
   return (
-    <Box>
-      <Typography variant="h4" align="center"
-          style={{ 
-              fontFamily: "'Kalnia', serif",
-              color: "rgb(34 110 39)"
-          }}>
-          Forum ogólne
+    <Box sx={{ width: '65%' }} margin="2% auto" >
+      <Typography variant="h4" align="center" color="primary" style={{ fontFamily: "'Kalnia', serif" }}>
+        Forum ogólne
       </Typography>
       <Typography align="center" variant="h4" sx={{ mt: 3 }} gutterBottom> Rejestracja </Typography>
 
@@ -116,7 +112,7 @@ export function SignUp() {
         </Box>
 
         <Box sx={{ margin: "auto", display: "flex", flexDirection: "column", justifyContent: "center", px: 6 }} >
-            <Button size="large" variant="contained" color="success" align="center" type="submit">Zarejestruj się</Button>
+            <Button size="large" variant="contained" color="primary" align="center" type="submit">Zarejestruj się</Button>
         </Box>
 
       </form>

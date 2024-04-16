@@ -82,13 +82,9 @@ export function Login() {
 
 
   return (
-    <Box>
-      <Typography variant="h4" align="center"
-          style={{ 
-              fontFamily: "'Kalnia', serif",
-              color: "rgb(34 110 39)"
-          }}>
-          Forum ogólne
+    <Box sx={{ width: '60%' }} margin="5% auto" >
+      <Typography variant="h4" align="center" color="primary" style={{ fontFamily: "'Kalnia', serif" }}>
+        Forum ogólne
       </Typography>
       <Typography align="center" variant="h4" sx={{ mt: 3 }} gutterBottom> Logowanie </Typography>
 
@@ -102,13 +98,13 @@ export function Login() {
             <OutlinedInput id="email-input" color="success" size="small" fullWidth
               {...register("email", { required: true })} />
 
-            <InputLabel htmlFor="my-input3" sx={{ pt: 2 }}>Password</InputLabel>
+            <InputLabel htmlFor="my-input3" sx={{ pt: 2 }}>Hasło</InputLabel>
             <OutlinedInput id="my-input" color="success" size="small" fullWidth type="password"
               {...register("password", { required: true })} />
         </Box>
 
         <Box sx={{ margin: "auto", display: "flex", flexDirection: "column", justifyContent: "center", px: 6 }} >
-            <Button size="large" variant="contained" color="success" align="center" type="submit">Zaloguj się</Button>
+            <Button size="large" variant="contained" color="primary" align="center" type="submit">Zaloguj się</Button>
         </Box>
           
       </form>

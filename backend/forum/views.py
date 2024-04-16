@@ -244,6 +244,8 @@ def add_comment():
             new_comment.author_id = author.id
             res_comment = execute_insert_query_obj(db.session, new_comment)
 
+            # TODO: przesłać prompty do logstasha żeby wyalertować potencjalne sql injection
+
             if res_comment:
                 app.logger.info(f"Comment added successfully: {res_comment}")
 

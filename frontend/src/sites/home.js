@@ -1,11 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useSnackbar } from "notistack";
-import { Avatar, Box, Card, CardContent, Chip, Divider, Grid, IconButton, LinearProgress, List, ListItem, ListItemText, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Card, CardContent, Chip, Divider, Grid, IconButton, LinearProgress, List, ListItem, Stack, Typography } from "@mui/material";
 import { StyledListBox, StyledListItemIcon, StyledListItemText } from "../utils/styles";
 
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Link } from "react-router-dom";
 import SelectedItemContext from "../utils/FilterContext";
 import { dateFormat } from "../utils/dateFormat";
@@ -37,16 +36,16 @@ export default function Home({ user, avatarColors }) {
     const foundCategory = availableCategories.find(category => category.name === selectedItem);
     const foundTag = popularTags.find(tag => tag.name === selectedItem);
 
-    if (selectedItem == 'Najpopularniejsze') {
+    if (selectedItem ===  'Najpopularniejsze') {
       setRoute('/get_popular_posts');
     }
-    else if (user && selectedItem == 'Moje posty') {
+    else if (user && selectedItem === 'Moje posty') {
       setRoute('/get_user_posts/' + user.id);
     }
     else if (foundCategory != null) {
       setRoute('/get_category_posts/' + foundCategory.id);
     }
-    else if (selectedItem == 'Wszystkie kategorie' || selectedItem == 'Wszystkie tagi') {
+    else if (selectedItem === 'Wszystkie kategorie' || selectedItem === 'Wszystkie tagi') {
       setRoute('/get_latest_posts');
     }
     else if (foundTag != null) {
