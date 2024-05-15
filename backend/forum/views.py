@@ -10,6 +10,8 @@ from .validators import is_valid_title, is_valid_description, validate_categorie
 from users.models import User
 from .models import ForumPost, Category, Tag, Comment
 
+from . import posts_logger
+
 
 @app.route("/get_categories", methods=['GET'])
 @cross_origin()
@@ -53,6 +55,7 @@ def create_forumpost():
                 error_messages['tags'] = tags_error
 
             if error_messages:
+                posts_logger.error(f'ERROR MESSAGES ADDING POST: {error_messages}')
                 return jsonify({"success": False, "error": error_messages})
             
             correct_tags = list(dict.fromkeys(tags))  # remove duplicates
@@ -89,10 +92,8 @@ def create_forumpost():
             res_forumpost = execute_insert_query_obj(db.session, forum_post)
 
             if res_forumpost:
-                app.logger.info(f"Forum post added successfully: {res_forumpost}")
+                posts_logger.info(f'FORUM POST ADDED SUCCESSFULLY: {res_forumpost}')
             
-            # TODO: przesłać prompty do logstasha żeby wyalertować potencjalne sql injection
-
             return jsonify({"success": True, "message": "Post added successfully", })
         except Exception as e:
             return jsonify({"success": False, "error": str(e)})
@@ -129,15 +130,18 @@ def get_latest_posts():
                 author = User.query.filter_by(id=post.author.id).first()
                 if author:
                     posts_list.append(post.to_dict())
+
+            posts_logger.info(f'FOR USER: {session.get("id", "guest")}')
             return jsonify({"success": True, "data": posts_list}), 200
         except Exception as e:
             return jsonify({"success": False, "error": str(e)})
 
 
-
-@app.route("/get_popular_posts", methods=['GET'])
+# _________ FOR NOW (!) ENDPOINT FOR VIEWING ALL POSTS (NOT POPULAR ONES)
+        
+@app.route("/get_all_posts", methods=['GET'])
 @cross_origin()
-def get_popular_posts():
+def get_all_posts():
     if request.method == 'GET':
         try:
             posts = ForumPost.query.order_by(ForumPost.likes.desc()).all()
@@ -147,6 +151,8 @@ def get_popular_posts():
                 author = User.query.filter_by(id=post.author.id).first()
                 if author:
                     posts_list.append(post.to_dict())
+
+            posts_logger.info(f'FOR USER: {session.get("id", "guest")}')
             return jsonify({"success": True, "data": posts_list}), 200
         except Exception as e:
             return jsonify({"success": False, "error": str(e)})
@@ -164,6 +170,8 @@ def get_user_posts(user_id):
             
             posts = ForumPost.query.filter_by(author_id=user_id).all()
             posts_list = [post.to_dict() for post in posts]
+
+            posts_logger.info(f'FOR USER: {session.get("id", "guest")}')
             return jsonify({"success": True, "data": posts_list}), 200
         except Exception as e:
             return jsonify({"success": False, "error": str(e)})
@@ -180,6 +188,8 @@ def get_category_posts(category_id):
             
             posts = ForumPost.query.join(ForumPost.categories).filter(Category.id == category_id).all()
             posts_list = [post.to_dict() for post in posts]
+
+            posts_logger.info(f'FOR USER: {session.get("id", "guest")}')
             return jsonify({"success": True, "data": posts_list}), 200
         except Exception as e:
             return jsonify({"success": False, "error": str(e)})
@@ -196,6 +206,8 @@ def get_tag_posts(tag_id):
             
             posts = ForumPost.query.join(ForumPost.tags).filter(Tag.id == tag_id).all()
             posts_list = [post.to_dict() for post in posts]
+
+            posts_logger.info(f'FOR USER: {session.get("id", "guest")}')
             return jsonify({"success": True, "data": posts_list}), 200
         except Exception as e:
             return jsonify({"success": False, "error": str(e)})
@@ -213,6 +225,7 @@ def get_current_post(post_id):
             comments = Comment.query.filter_by(post_id=post_id).all()
             comments_list = [comment.to_dict() for comment in comments]
 
+            posts_logger.info(f'FOR USER: {session.get("id", "guest")}')
             return jsonify({"success": True, "data": {
                 "post": post.to_dict(),
                 "comments": comments_list
@@ -232,6 +245,7 @@ def add_comment():
 
             comment_error = is_valid_comment(comment)
             if comment_error:
+                posts_logger.error(f'ERROR ADDING COMMENT: {comment_error}')
                 return jsonify({"success": False, "error": comment_error})
 
             new_comment = Comment(content=comment, post_id=post_id)
@@ -244,10 +258,8 @@ def add_comment():
             new_comment.author_id = author.id
             res_comment = execute_insert_query_obj(db.session, new_comment)
 
-            # TODO: przesłać prompty do logstasha żeby wyalertować potencjalne sql injection
-
             if res_comment:
-                app.logger.info(f"Comment added successfully: {res_comment}")
+                posts_logger.info(f'COMMENT ADDED SUCCESSFULLY: {res_comment}')
 
             return jsonify({"success": True, "data": "New comment added successfully"})
         except Exception as e:

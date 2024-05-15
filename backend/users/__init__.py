@@ -1,23 +1,33 @@
-from flask import Flask
+from flask import Flask, request
 import logging
 
 app = Flask(__name__)
 
 logging.basicConfig(level=logging.INFO)
 
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+class UserAgentFilter(logging.Filter):
+    def filter(self, record):
+        record.user_agent = request.headers.get('User-Agent', 'Unknown')
+        record.http_method = request.method
+        record.endpoint = request.path
+        return True
 
-login_logger = logging.getLogger('loginview')
-login_handler = logging.FileHandler('example_logs/login_view.log')
-login_handler.setFormatter(formatter)
-login_logger.addHandler(login_handler)
+user_agent_filter = UserAgentFilter()
 
-register_logger = logging.getLogger('registerview')
-register_handler = logging.FileHandler('example_logs/register_view.log')
-register_handler.setFormatter(formatter)
-register_logger.addHandler(register_handler)
+formatter = logging.Formatter('%(asctime)s - %(http_method)s - %(endpoint)s - %(user_agent)s -  %(levelname)s - %(message)s')
+
+
+auth_logger = logging.getLogger('authview')
+auth_handler = logging.FileHandler('example_logs/auth_view.log')
+
+auth_handler.addFilter(user_agent_filter)
+auth_handler.setFormatter(formatter)
+auth_logger.addHandler(auth_handler)
+
 
 session_logger = logging.getLogger('logoutview')
 session_handler = logging.FileHandler('example_logs/session_interval.log')
+
+session_handler.addFilter(user_agent_filter)
 session_handler.setFormatter(formatter)
 session_logger.addHandler(session_handler)

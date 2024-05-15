@@ -1,5 +1,0 @@
-2024-04-16 21:50:55,311 - ERROR - USER ENTERED INVALID DATA, LOGIN: {'email': 'Podano błędny e-mail', 'password': 'Podano błędne hasło'}, EMAIL ENTERED: dfsfd
-2024-04-16 21:52:43,317 - ERROR - USER ENTERED INVALID DATA, LOGIN: {'email': 'Podano błędny e-mail'}, EMAIL ENTERED: addasfd
-2024-04-16 21:56:19,036 - INFO - USER REQUESTED LOGIN {'id': 11, 'username': 'maria55', 'email': 'maria55@test.com'}
-2024-04-16 22:19:48,151 - INFO - USER REQUESTED LOGIN {'id': 11, 'username': 'maria55', 'email': 'maria55@test.com'}
-2024-04-16 22:21:14,028 - ERROR - USER ENTERED INVALID DATA, LOGIN: {'email': 'Podano błędny e-mail'}, EMAIL ENTERED: test@test1.com

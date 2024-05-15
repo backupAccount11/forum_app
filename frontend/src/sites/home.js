@@ -36,8 +36,8 @@ export default function Home({ user, avatarColors }) {
     const foundCategory = availableCategories.find(category => category.name === selectedItem);
     const foundTag = popularTags.find(tag => tag.name === selectedItem);
 
-    if (selectedItem ===  'Wszystkie posty') {
-      setRoute('/get_popular_posts');
+    if (selectedItem ===  'Wszystkie') {
+      setRoute('/get_all_posts');
     }
     else if (user && selectedItem === 'Moje posty') {
       setRoute('/get_user_posts/' + user.id);

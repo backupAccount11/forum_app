@@ -4,7 +4,6 @@ import UserContext from "../utils/UserContext";
 import { Badge, Grid, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 
 import AttachFileIcon from '@mui/icons-material/AttachFile';
-import MovingIcon from '@mui/icons-material/Moving';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import { StyledBox, StyledOtherListBox, StyledListItemText, StyledListItemIcon } from "../utils/styles";
@@ -12,6 +11,7 @@ import SelectedItemContext from "../utils/FilterContext";
 import AvailableCategoriesContext from "../utils/CategoriesContext";
 import PopularTagsContext from "../utils/TagsContext";
 
+import HorizontalSplitIcon from '@mui/icons-material/HorizontalSplit';
 
 
 export default function LeftNavbar({ post_id }) {
@@ -23,7 +23,7 @@ export default function LeftNavbar({ post_id }) {
 
   useEffect(() => {
     if (post_id == null) {
-      setSelectedItem('Wszystkie posty');
+      setSelectedItem('Wszystkie');
     } else {
       setSelectedItem(null);
     }
@@ -38,12 +38,12 @@ export default function LeftNavbar({ post_id }) {
       return <List dense>
                   <ListItem disablePadding>
                       <ListItemButton href="/"
-                          selected={selectedItem === 'Najpopularniejsze'} 
-                          onClick={() => handleItemClick('Najpopularniejsze')}>
+                          selected={selectedItem === 'Wszystkie'} 
+                          onClick={() => handleItemClick('Wszystkie')}>
                           <StyledListItemIcon>
-                              <MovingIcon />
+                              <HorizontalSplitIcon />
                           </StyledListItemIcon>
-                          <StyledListItemText primary="Najpopularniejsze" />
+                          <StyledListItemText primary="Wszystkie" />
                       </ListItemButton>
                   </ListItem>
                   <ListItem disablePadding>

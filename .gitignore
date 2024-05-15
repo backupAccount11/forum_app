@@ -1,3 +1,7 @@
 lazy.sh
+logstash_pipeline_temp.conf
 /node_modules
 .DS_Store
+
+/example_logs_bck
+/backend/example_logs
