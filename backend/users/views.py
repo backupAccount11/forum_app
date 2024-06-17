@@ -49,7 +49,9 @@ def registration():
                 error_messages["password"] = "Podano błędne hasło"
 
             if error_messages:
-                auth_logger.error(f'USER ENTERED INVALID DATA, REGISTRATION: {error_messages}, EMAIL ENTERED: {email}, USERNAME: {username}')
+                temp= {'email': email, 'username': username}
+
+                auth_logger.error(f'USER ENTERED INVALID DATA, REGISTRATION - {str(temp)}')
                 return jsonify({"success": False, "error": error_messages})
 
             if User.query.filter_by(username=username).first():
@@ -69,7 +71,7 @@ def registration():
             set_session_cookie(result['data'])
             user_data = { attribute: session.get(attribute) for attribute in ['id', 'username', 'email'] }
 
-            auth_logger.info(f'USER REGISTERED SUCCESSFULLY {user_data}')
+            auth_logger.info(f'USER REGISTERED SUCCESSFULLY - {user_data}')
             
             return jsonify({"success": True, "message": "Registration successful", "user_data": user_data})
         except Exception as e:
@@ -93,7 +95,8 @@ def login():
                 error_messages["password"] = "Podano błędne hasło"
 
             if error_messages:
-                auth_logger.error(f'USER ENTERED INVALID DATA, LOGIN: {error_messages}, EMAIL ENTERED: {email}')
+                temp = {'email': email}
+                auth_logger.error(f'USER ENTERED INVALID DATA, LOGIN - {str(temp)}')
                 return jsonify({"success": False, "error": error_messages})
             
             db_user = User.query.filter_by(email=email).first()
@@ -114,7 +117,7 @@ def login():
             set_session_cookie(db_user)
             user_data = { attribute: session.get(attribute) for attribute in ['id', 'username', 'email'] }
 
-            auth_logger.info(f'USER REQUESTED LOGIN {user_data}')
+            auth_logger.info(f'USER REQUESTED LOGIN - {user_data}')
             
             return jsonify({"success": True, "message": "Login successful", "user_data": user_data})
         except Exception as e:
@@ -154,7 +157,8 @@ def logout():
                 current_time = datetime.datetime.now().timestamp()
                 session_duration = current_time - session["login_time"]
 
-                session_logger.info(f'USER REQUESTED LOGOUT, SESSION DURATION (IN SECONDS): {session_duration}, FOR USER WITH USERNAME: {session["username"]}, EMAIL: {session["email"]}, ID: {session["id"]}')
+                temp = { "USER": session["username"], "EMAIL": session["email"], "ID": session["id"] }
+                session_logger.info(f'USER REQUESTED LOGOUT, SESSION DURATION (IN SECONDS): {session_duration}, FOR USER: {str(temp)}')
 
             clear_session_cookie()
 

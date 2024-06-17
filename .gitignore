@@ -1,5 +1,5 @@
 lazy.sh
-logstash_pipeline_temp.conf
+*.conf
 /node_modules
 .DS_Store
 

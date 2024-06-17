@@ -55,7 +55,7 @@ def create_forumpost():
                 error_messages['tags'] = tags_error
 
             if error_messages:
-                posts_logger.error(f'ERROR MESSAGES ADDING POST: {error_messages}')
+                posts_logger.error(f'ERROR MESSAGES ADDING POST - {error_messages}')
                 return jsonify({"success": False, "error": error_messages})
             
             correct_tags = list(dict.fromkeys(tags))  # remove duplicates
@@ -92,7 +92,7 @@ def create_forumpost():
             res_forumpost = execute_insert_query_obj(db.session, forum_post)
 
             if res_forumpost:
-                posts_logger.info(f'FORUM POST ADDED SUCCESSFULLY: {res_forumpost}')
+                posts_logger.info(f'FORUM POST ADDED SUCCESSFULLY - {res_forumpost}')
             
             return jsonify({"success": True, "message": "Post added successfully", })
         except Exception as e:
@@ -245,7 +245,7 @@ def add_comment():
 
             comment_error = is_valid_comment(comment)
             if comment_error:
-                posts_logger.error(f'ERROR ADDING COMMENT: {comment_error}')
+                posts_logger.error(f'ERROR ADDING COMMENT - {comment_error}')
                 return jsonify({"success": False, "error": comment_error})
 
             new_comment = Comment(content=comment, post_id=post_id)
@@ -259,7 +259,7 @@ def add_comment():
             res_comment = execute_insert_query_obj(db.session, new_comment)
 
             if res_comment:
-                posts_logger.info(f'COMMENT ADDED SUCCESSFULLY: {res_comment}')
+                posts_logger.info(f'COMMENT ADDED SUCCESSFULLY - {res_comment}')
 
             return jsonify({"success": True, "data": "New comment added successfully"})
         except Exception as e:
